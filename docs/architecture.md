@@ -50,7 +50,7 @@ Each HarborDesk database is independent. Seeded rows use identical IDs and busin
 
 Migration/seed initialization runs as the database owner in a one-shot service. Runtime uses a non-owner role with DML and sequence-use permissions, no role/database creation, no schema creation, and query/lock/idle-transaction timeouts. The intentional SQL demonstration runs in a separate read-only transaction and returns at most fifty rows. Initialization must succeed before the web service starts.
 
-Shared request dependencies commit a successful unit of work and roll back on exceptions. Authentication failure accounting is committed intentionally before returning an error. The notebook uses short SQLite transactions and closes each connection; it is stored in its own volume and survives business resets.
+Shared database dependencies use FastAPI's function scope: they commit a successful unit of work or roll back on exceptions before publishing the response. This prevents a new session or mutation from being acknowledged before it is visible to the next request; commit failures cannot publish a success cookie. Routes fully materialize their responses and do not stream from an open session. Authentication failure accounting is committed intentionally before returning an error. The notebook uses short SQLite transactions and closes each connection; it is stored in its own volume and survives business resets.
 
 ## Request sequence
 

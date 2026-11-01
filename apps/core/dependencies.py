@@ -16,7 +16,7 @@ class Principal:
     session: LoginSession
 
 
-def principal(request: Request, db: Session = Depends(get_db)) -> Principal:
+def principal(request: Request, db: Session = Depends(get_db, scope="function")) -> Principal:
     policy: SecurePolicy = request.app.state.policy
     token = request.cookies.get(f"aegis_{policy.label}", "")
     session = db.get(LoginSession, digest(token)) if token and len(token) < 200 else None
@@ -29,7 +29,7 @@ def principal(request: Request, db: Session = Depends(get_db)) -> Principal:
 def change(
     request: Request,
     actor: Principal = Depends(principal),
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db, scope="function"),
 ) -> Principal:
     policy: SecurePolicy = request.app.state.policy
     try:

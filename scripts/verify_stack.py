@@ -51,14 +51,18 @@ async def verify() -> list[dict[str, object]]:
                     "/api/login", json={"username": "admin", "password": DEMO_PASSWORD}
                 )
                 if login.status_code != 200:
-                    raise RuntimeError("Fixture admin login failed; no verified result is claimed")
+                    raise RuntimeError(
+                        f"Fixture admin login failed: {lab_id}/{variant}: status={login.status_code}"
+                    )
                 reset = await client.post(
                     "/api/admin/reset",
                     json={"confirmation": "RESET SYNTHETIC HARBORDESK"},
                     headers={"X-CSRF-Token": login.json()["csrf"]},
                 )
                 if reset.status_code != 200:
-                    raise RuntimeError("Synthetic reset failed")
+                    raise RuntimeError(
+                        f"Synthetic reset failed: {lab_id}/{variant}: status={reset.status_code}, request_id={reset.headers.get('x-request-id', 'unavailable')}"
+                    )
                 client.cookies.clear()
                 result = await check(client, lab_id, variant)
                 results.append({"lab_id": lab_id, **result})

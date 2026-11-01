@@ -9,6 +9,56 @@ from apps.core.seed import DEMO_PASSWORD, seed
 from tests.conftest import authenticate
 
 
+def test_login_transaction_finishes_before_response_is_published(app_factory):
+    import asyncio
+
+    import httpx
+    from sqlalchemy import event
+
+    env = app_factory()
+    order = []
+    event.listen(env.app.state.sessions, "after_commit", lambda session: order.append("commit"))
+
+    async def observed_app(scope, receive, send):
+        async def observed_send(message):
+            if message["type"] == "http.response.start":
+                order.append("response")
+            await send(message)
+
+        await env.app(scope, receive, observed_send)
+
+    async def login():
+        async with httpx.AsyncClient(
+            transport=httpx.ASGITransport(app=observed_app), base_url="http://testserver"
+        ) as client:
+            response = await client.post(
+                "/api/login", json={"username": "alice", "password": DEMO_PASSWORD}
+            )
+            assert response.status_code == 200
+
+    asyncio.run(login())
+    assert order and order[-1] == "response", order
+
+
+def test_failed_session_commit_never_publishes_success_or_cookie(app_factory):
+    from sqlalchemy import event
+    from sqlalchemy.exc import SQLAlchemyError
+
+    env = app_factory()
+
+    def reject_session_commit(session):
+        if any(isinstance(row, LoginSession) for row in session.new):
+            raise SQLAlchemyError("Synthetic transaction failure")
+
+    event.listen(env.app.state.sessions, "before_commit", reject_session_commit)
+    response = env.client.post("/api/login", json={"username": "alice", "password": DEMO_PASSWORD})
+    assert response.status_code == 500
+    assert response.json() == {"detail": "An internal error occurred"}
+    assert "aegis_hardened" not in response.cookies
+    with env.app.state.sessions() as db:
+        assert list(db.scalars(select(LoginSession))) == []
+
+
 def test_legitimate_workflow(secured):
     client, headers = secured.client, secured.headers
     created = client.post(

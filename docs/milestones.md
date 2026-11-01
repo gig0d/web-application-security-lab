@@ -18,6 +18,7 @@ Committer for each listed commit: Giovanny Alvarado Barrantes <gioab0411@gmail.c
 | `07cd0f8` | Added supported-engine checks, concurrent-user regression, repeated reset and non-empty progress verification | Focused lifecycle, application and scanner-scope checks passed; hosted execution exposed the need for exact active-start URL seeding | Verified |
 | `46e3062` | Enforced isolated gateway modes and seeded both actual active-scan start URLs | Source regressions and hardened hosted workflow passed; full-stack execution exposed controller connectivity across isolated networks | Verified |
 | `b06b792` | Routed controller comparisons/resets through two fixed ingress ports while keeping it on its own internal network | Both secure jobs and the complete training workflow passed: PostgreSQL, 20 HTTP comparisons, 9 Docker browser checks, actual HTML/API active scan and two resets | Verified |
+| `5b019c8` | Finalized SQL parameter redaction, local-daemon/bridge guards and actual evidence/provenance | 119 local tests passed/1 PostgreSQL skip, 95% application coverage; both secure CI jobs passed; full training exposed an intermittent synthetic-reset failure, followed by a reproduced response-before-commit defect | Verified |
 
 The removed dependency-update configuration briefly generated one bot-authored PR on a separate branch. It was closed without merging, and no bot commit entered `main`. Automatic updates remain disabled; no bot history is rewritten or concealed. Accepted development history uses only the exact owner identity above.
 

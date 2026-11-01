@@ -8,7 +8,7 @@ Verification performed on 2026-11-01. Local development used Windows PowerShell 
 | Effective author AND committer | Giovanny Alvarado Barrantes <gioab0411@gmail.com> |
 | Dependency installation / pip check | Installed; no broken requirements |
 | PyPI hash locks | 33 runtime / 77 development distributions |
-| Combined local unit/integration/isolation/training/browser run | 119 passed; 1 PostgreSQL test skipped locally |
+| Combined local unit/integration/isolation/training/browser run | 121 passed; 1 PostgreSQL test skipped locally |
 | Application line coverage for that run | 95% (931/980 statements), including controller, ingress and simulator; only the two thin variant entry points omitted |
 | Runtime dependency audit | No known vulnerabilities reported |
 | Browser execution | 9 passed in Chromium 156; stored/reflected XSS, CSRF, object access, notebook/mobile layout |
@@ -18,7 +18,7 @@ Verification performed on 2026-11-01. Local development used Windows PowerShell 
 | Local Docker runtime | Unavailable on the Windows workstation |
 | Hosted hardened security workflow | Both jobs passed on owner commit `b06b792`; real PostgreSQL, migrations, static/audit gates, Docker build/isolation and authenticated passive ZAP |
 | Hosted full isolated training workflow | Passed on owner commit `b06b792`; full stack, twenty HTTP comparisons, restricted PostgreSQL role/read-only transaction, independent databases/restart, nine Docker browser checks, bounded active scans and two volume resets |
-| Final source refinements | SQL exception parameter redaction, bridge/NAT and local-daemon guards, browser fixture teardown and evidence provenance regressions pass locally; the final commit is separately checked by standard CI |
+| Final source refinements | SQL parameter redaction, isolation guards, fixture teardown, evidence provenance and commit-before-response regressions pass locally; committed source is separately checked by the hosted workflows |
 
 The earlier 105-pass run reported 97% coverage with broad `main.py` exclusions. The final 95% measurement includes the controller, relay and simulator implementations and supersedes that narrower metric. The final combined run also verifies that a remote `DOCKER_HOST` override is rejected before any Docker command is issued.
 
@@ -30,7 +30,7 @@ Local raw evidence, JUnit, coverage, Bandit and dependency audit outputs are wri
 
 The browser checks set harmless local DOM attributes for XSS proofs, submit a real cross-origin/same-site form for CSRF and capture actual pages. One upstream Starlette warning deprecates HTTPX 0.x use in TestClient; the selected compatible releases still execute the API tests successfully.
 
-Failures were corrected and retained in the engineering record: disabled-profile inventory, split tmpfs options, inaccessible host publication on internal-only networks, scanner/host UID ownership, exact active-start URL seeding and controller connectivity after isolated gateways were enabled. Fixed ingress, atomic artifact replacement, exact-byte evidence storage and fixed controller relay addresses address those measured failures. Earlier local sandbox temporary-directory, cookie-domain, notebook-connection and dashboard `hidden`-attribute issues were also corrected before acceptance.
+Failures were corrected and retained in the engineering record: disabled-profile inventory, split tmpfs options, inaccessible host publication on internal-only networks, scanner/host UID ownership, exact active-start URL seeding and controller connectivity after isolated gateways were enabled. A subsequent full run on `5b019c8` failed at synthetic reset despite passing startup/isolation. Investigation reproduced login publishing its response before its database commit. Function-scoped database dependencies now finalize transactions before response delivery; regressions verify commit/send order and prevent a failed session commit from publishing success or a cookie. The full workflow is rerun on the corrected source. Fixed ingress, atomic artifact replacement, exact-byte evidence storage and fixed controller relay addresses address the earlier measured failures. Earlier local sandbox temporary-directory, cookie-domain, notebook-connection and dashboard `hidden`-attribute issues were also corrected before acceptance.
 
 ## Acceptance boundary
 

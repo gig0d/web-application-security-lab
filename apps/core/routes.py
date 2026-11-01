@@ -67,7 +67,7 @@ def page(request: Request, name: str, **context: Any) -> HTMLResponse:
 
 
 @router.get("/health")
-def health(db: Session = Depends(get_db)) -> dict[str, str]:
+def health(db: Session = Depends(get_db, scope="function")) -> dict[str, str]:
     db.execute(select(1))
     return {"status": "ok"}
 
@@ -82,7 +82,7 @@ def login(
     body: LoginInput,
     request: Request,
     response: Response,
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db, scope="function"),
 ) -> dict[str, object]:
     policy = policy_for(request)
     origin = request.headers.get("origin")
@@ -131,7 +131,7 @@ def logout(
     request: Request,
     response: Response,
     actor: Principal = Depends(change),
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db, scope="function"),
 ) -> dict[str, bool]:
     policy = policy_for(request)
     policy.revoke(db, actor.session)
@@ -146,7 +146,7 @@ def tickets(
     q: str = "",
     status: str = "",
     actor: Principal = Depends(principal),
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db, scope="function"),
 ) -> list[dict[str, object]]:
     if len(q) > 200 or status not in {"", "open", "closed"}:
         raise HTTPException(422, "Invalid search")
@@ -165,7 +165,7 @@ def create_ticket(
     body: TicketInput,
     request: Request,
     actor: Principal = Depends(change),
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db, scope="function"),
 ) -> dict[str, object]:
     ticket = Ticket(owner_id=actor.user.id, title=body.title, description=body.description)
     db.add(ticket)
@@ -179,7 +179,7 @@ def read_ticket(
     ticket_id: int,
     request: Request,
     actor: Principal = Depends(principal),
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db, scope="function"),
 ) -> dict[str, object]:
     ticket = authorized_ticket(request, db, actor.user, ticket_id)
     return ticket_dict(ticket)
@@ -191,7 +191,7 @@ def update_ticket(
     body: StatusInput,
     request: Request,
     actor: Principal = Depends(change),
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db, scope="function"),
 ) -> dict[str, object]:
     ticket = authorized_ticket(request, db, actor.user, ticket_id)
     ticket.status = body.status
@@ -205,7 +205,7 @@ def assign(
     body: AssignmentInput,
     request: Request,
     actor: Principal = Depends(change),
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db, scope="function"),
 ) -> dict[str, object]:
     administrator(request, db, actor.user)
     ticket = authorized_ticket(request, db, actor.user, ticket_id)
@@ -223,7 +223,7 @@ def role_change(
     body: RoleInput,
     request: Request,
     actor: Principal = Depends(change),
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db, scope="function"),
 ) -> dict[str, bool]:
     # Role changes always require real admin privileges, even in the bounded training app.
     if actor.user.role != "admin":
@@ -242,7 +242,7 @@ def comments(
     ticket_id: int,
     request: Request,
     actor: Principal = Depends(principal),
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db, scope="function"),
 ) -> list[dict[str, object]]:
     authorized_ticket(request, db, actor.user, ticket_id)
     query = select(Comment).where(Comment.ticket_id == ticket_id).order_by(Comment.id)
@@ -257,7 +257,7 @@ def add_comment(
     body: CommentInput,
     request: Request,
     actor: Principal = Depends(change),
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db, scope="function"),
 ) -> dict[str, int]:
     authorized_ticket(request, db, actor.user, ticket_id)
     if body.private and actor.user.role == "customer":
@@ -274,7 +274,7 @@ def attachments(
     ticket_id: int,
     request: Request,
     actor: Principal = Depends(principal),
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db, scope="function"),
 ) -> list[dict[str, object]]:
     authorized_ticket(request, db, actor.user, ticket_id)
     return [
@@ -290,7 +290,7 @@ def download(
     attachment_id: int,
     request: Request,
     actor: Principal = Depends(principal),
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db, scope="function"),
 ) -> Response:
     attachment = db.get(Attachment, attachment_id)
     ticket = db.get(Ticket, attachment.ticket_id) if attachment else None
@@ -316,7 +316,7 @@ async def upload(
     file: UploadFile,
     request: Request,
     actor: Principal = Depends(change),
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db, scope="function"),
 ) -> dict[str, object]:
     authorized_ticket(request, db, actor.user, ticket_id)
     content = await file.read(131073)
@@ -338,7 +338,7 @@ async def upload(
 async def profile(
     request: Request,
     actor: Principal = Depends(change),
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db, scope="function"),
 ) -> dict[str, str]:
     kind = request.headers.get("content-type", "").split(";")[0]
     try:
@@ -374,7 +374,7 @@ def diagnostic_error(request: Request, actor: Principal = Depends(principal)) ->
 def audit_export(
     request: Request,
     actor: Principal = Depends(principal),
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db, scope="function"),
 ) -> list[dict[str, object]]:
     if actor.user.role != "admin":
         raise HTTPException(403, "Administrator role required")
@@ -398,7 +398,7 @@ def reset_business_data(
     body: ResetInput,
     request: Request,
     actor: Principal = Depends(change),
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db, scope="function"),
 ) -> dict[str, bool]:
     from apps.core.seed import seed
 
@@ -424,7 +424,7 @@ def ticket_page(
     ticket_id: int,
     request: Request,
     actor: Principal = Depends(principal),
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db, scope="function"),
 ) -> HTMLResponse:
     ticket = authorized_ticket(request, db, actor.user, ticket_id)
     visible = comments(ticket_id, request, actor, db)
