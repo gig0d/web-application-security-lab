@@ -14,6 +14,7 @@ Committer for each listed commit: Giovanny Alvarado Barrantes <gioab0411@gmail.c
 | `66c08c1` | Resolved Compose configuration includes disabled scanner profile without starting it | 20 isolated configuration/lifecycle regressions passed | Verified |
 | `f33bd02` | Corrected complete tmpfs mount strings after an actual Docker startup error | 21 configuration/lifecycle regressions passed; new temporary-path lint false positives addressed in the subsequent source revision | Verified |
 | `2212051` | Complete lab/teaching documentation, actual reports/screenshots/passive ZAP artifacts, full-stack acceptance workflow and redaction | Combined local run: 105 passed/1 PostgreSQL skip; 97% application coverage; later redaction/browser checks passed; full hosted acceptance dispatched separately | Verified |
+| `0d83e76` | Fixed loopback TCP ingress, non-root scanner report replacement and exact-byte retained evidence | 26 focused regressions passed; complete secure and full training workflows subsequently passed on clean hosted runners | Verified |
 
 The removed dependency-update configuration briefly generated one bot-authored PR on a separate branch. It was closed without merging, and no bot commit entered `main`. Automatic updates remain disabled; no bot history is rewritten or concealed. Accepted development history uses only the exact owner identity above.
 

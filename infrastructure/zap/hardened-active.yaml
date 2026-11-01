@@ -1,4 +1,4 @@
-# Explicit --active selection required. Fixed local search scope only.
+# Explicit --active selection. Fixed HTML and SQL search sinks, three minutes combined.
 env:
   contexts:
   - name: harbordesk-hardened
@@ -74,7 +74,7 @@ jobs:
     user: alice
     url: http://hardened:8080/search
     maxRuleDurationInMins: 1
-    maxScanDurationInMins: 3
+    maxScanDurationInMins: 1
     threadPerHost: 1
     delayInMs: 250
     maxAlertsPerRule: 10
@@ -86,6 +86,20 @@ jobs:
       name: Reflected cross-site scripting
       strength: Low
       threshold: Medium
+- type: activeScan
+  parameters:
+    context: harbordesk-hardened
+    user: alice
+    url: http://hardened:8080/api/tickets
+    maxRuleDurationInMins: 1
+    maxScanDurationInMins: 2
+    threadPerHost: 1
+    delayInMs: 250
+    maxAlertsPerRule: 10
+  policyDefinition:
+    defaultStrength: Low
+    defaultThreshold: 'Off'
+    rules:
     - id: 40018
       name: SQL injection
       strength: Low

@@ -43,6 +43,59 @@ def test_legitimate_workflow(secured):
     assert client.get("/portal").status_code == 200
 
 
+def test_concurrent_users_keep_ticket_and_private_note_boundaries(app_factory):
+    from concurrent.futures import ThreadPoolExecutor
+    from threading import Barrier
+
+    from fastapi.testclient import TestClient
+
+    env = app_factory()
+    barrier = Barrier(3)
+    with TestClient(env.app) as alice, TestClient(env.app) as bob, TestClient(env.app) as staff:
+
+        def login(client, username):
+            response = client.post(
+                "/api/login", json={"username": username, "password": DEMO_PASSWORD}
+            )
+            assert response.status_code == 200
+            return {"X-CSRF-Token": response.json()["csrf"]}
+
+        alice_token, bob_token, staff_token = (
+            login(alice, "alice"),
+            login(bob, "bob"),
+            login(staff, "sam"),
+        )
+
+        def perform(client, method, body, headers):
+            barrier.wait(timeout=5)
+            return client.request(
+                method,
+                "/api/tickets/1" if method == "PATCH" else "/api/tickets/1/comments",
+                json=body,
+                headers=headers,
+            ).status_code
+
+        with ThreadPoolExecutor(max_workers=3) as pool:
+            futures = [
+                pool.submit(perform, alice, "PATCH", {"status": "closed"}, alice_token),
+                pool.submit(
+                    perform, bob, "POST", {"body": "Unauthorized concurrent write"}, bob_token
+                ),
+                pool.submit(
+                    perform,
+                    staff,
+                    "POST",
+                    {"body": "Private concurrent note", "private": True},
+                    staff_token,
+                ),
+            ]
+            assert [future.result(timeout=10) for future in futures] == [200, 404, 201]
+        assert alice.get("/api/tickets/1").json()["status"] == "closed"
+        assert "Private concurrent note" not in alice.get("/api/tickets/1/comments").text
+        assert "Private concurrent note" in staff.get("/api/tickets/1/comments").text
+        assert bob.get("/api/tickets/1").status_code == 404
+
+
 @pytest.mark.parametrize(
     "path,method,body",
     [

@@ -21,6 +21,7 @@ def validate_plan(plan: dict[str, Any], active: bool) -> list[str]:
         if auth.get("loginRequestUrl") != APPROVED + "/api/login":
             errors.append("Authentication target rejected")
     seen_active = False
+    active_minutes = 0
     for job in plan.get("jobs", []):
         kind = job.get("type")
         if kind not in {
@@ -45,8 +46,9 @@ def validate_plan(plan: dict[str, Any], active: bool) -> list[str]:
             errors.append("Spider must be bounded to one minute")
         if kind == "activeScan":
             seen_active = True
-            if parameters.get("url") != APPROVED + "/search":
-                errors.append("Active scan is limited to the search subtree")
+            if parameters.get("url") not in {APPROVED + "/search", APPROVED + "/api/tickets"}:
+                errors.append("Active scan is limited to the two implemented search sinks")
+            active_minutes += parameters.get("maxScanDurationInMins", 0)
             if (
                 not 0 < parameters.get("maxScanDurationInMins", 0) <= 3
                 or parameters.get("threadPerHost") != 1
@@ -56,6 +58,8 @@ def validate_plan(plan: dict[str, Any], active: bool) -> list[str]:
             errors.append("Report path rejected")
     if seen_active != active:
         errors.append("Active job requires separate explicit selection")
+    if active_minutes > 3:
+        errors.append("Combined active scanning exceeds three minutes")
     return errors
 
 

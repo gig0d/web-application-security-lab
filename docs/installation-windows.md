@@ -1,6 +1,6 @@
 # Windows installation
 
-Use Windows PowerShell or PowerShell 7, Git, Python 3.13 and Docker Desktop configured for Linux containers. Docker Desktop requires supported Windows virtualization/WSL2 configuration. Verify these prerequisites rather than assuming VS Code supplies them:
+Use Windows PowerShell or PowerShell 7, Git, Python 3.13 and Docker Desktop configured for Linux containers with Engine 28 or later. Docker Desktop requires supported Windows virtualization/WSL2 configuration. Verify these prerequisites rather than assuming VS Code supplies them:
 
 ```powershell
 git --version

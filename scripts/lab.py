@@ -18,6 +18,11 @@ def check_local_docker() -> None:
     endpoint = contexts[0]["Endpoints"]["docker"]["Host"]
     if not endpoint.startswith(("npipe://", "unix://")):
         raise SystemExit("Only a local Docker Desktop/Engine context is authorized")
+    version = docker(["version", "--format", "{{.Server.Version}}"]).strip()
+    if not version.split(".", 1)[0].isdigit() or int(version.split(".", 1)[0]) < 28:
+        raise SystemExit(
+            "Docker Engine 28 or later is required for the loopback publication boundary"
+        )
 
 
 def check_config() -> None:

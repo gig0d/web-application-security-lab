@@ -8,13 +8,13 @@ python -m scripts.lab scan --target hardened
 python -m scripts.lab scan --target hardened --active
 ```
 
-The second command sends only explicitly fetched/crawled application requests and performs passive inspection. The third command additionally injects bounded reflected-XSS and SQL-injection checks into the local hardened `/search` subtree. It is an active test and requires the separate `--active` selection. No arbitrary target argument or vulnerable-target scan shortcut is provided.
+The second command sends only explicitly fetched/crawled application requests and performs passive inspection. The third command additionally injects bounded reflected-XSS and SQL-injection checks into the fixed local hardened `/search` and `/api/tickets` search sinks. It is an active test and requires the separate `--active` selection. No arbitrary target argument or vulnerable-target scan shortcut is provided.
 
 ## Scope and authentication
 
 The sole context is `http://hardened:8080`. Its include regex is anchored to that exact Compose hostname and port; administrative/reset/logout paths are excluded. JSON authentication uses the public synthetic `alice` fixture, cookie session management, and `/api/session` polling. The requestor job expects 200 responses for authenticated pages. Warnings/errors stop the plan, so a broken authentication setup is not silently accepted as a successful authenticated assessment.
 
-The requestor seeds API, ticket, search and document URLs because the modest JavaScript frontend is not fully discoverable by a traditional spider. The spider is limited to one minute, three levels and twenty children per node; it never submits POST forms. Passive processing waits at most one minute. Active scanning uses one thread, 250 ms delay, one-minute per-rule and three-minute total limits, with only two selected rules enabled. The host command also imposes a ten-minute subprocess ceiling. Container memory, CPU, process limits and an internal network bound the runtime.
+The requestor seeds API, ticket, search and document URLs because the modest JavaScript frontend is not fully discoverable by a traditional spider. The spider is limited to one minute, three levels and twenty children per node; it never submits POST forms. Passive processing waits at most one minute. Active scanning uses one thread, 250 ms delay, one-minute per-rule and a combined three-minute active budget (one minute for HTML/XSS, two for the SQL-backed API), with only the corresponding selected rule enabled at each sink. The host command also imposes a ten-minute subprocess ceiling. Container memory, CPU, process limits and an internal network bound the runtime.
 
 `scripts.zap_scope` checks target, context, requestor methods, job types and execution bounds before launch. Compose source/resolved checks and effective runtime inspection must pass. The ZAP container cannot reach external targets through its internal network even if a scanner plugin attempts an outbound callback.
 

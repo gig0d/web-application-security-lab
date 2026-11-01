@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-11-01T09:05:16.017487+00:00",
+  "exit_status": 0,
+  "database": "PostgreSQL via actual Docker Compose",
+  "observations": [
+    {
+      "lab_id": "lab05",
+      "variant": "vulnerable",
+      "observations": {
+        "browser": "Chromium",
+        "dom_marker": "stored",
+        "browser_execution_verified": true,
+        "screenshot": "artifacts/compose/browser/lab05-vulnerable.png",
+        "transport": "Actual local Docker Compose over loopback HTTP",
+        "database": "PostgreSQL"
+      },
+      "test": "tests/browser/test_browser_labs.py::test_stored_xss[vulnerable]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab05",
+      "variant": "hardened",
+      "observations": {
+        "browser": "Chromium",
+        "dom_marker": null,
+        "browser_execution_verified": true,
+        "screenshot": "artifacts/compose/browser/lab05-hardened.png",
+        "transport": "Actual local Docker Compose over loopback HTTP",
+        "database": "PostgreSQL"
+      },
+      "test": "tests/browser/test_browser_labs.py::test_stored_xss[hardened]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab06",
+      "variant": "vulnerable",
+      "observations": {
+        "browser": "Chromium",
+        "dom_marker": "reflected",
+        "browser_execution_verified": true,
+        "screenshot": "artifacts/compose/browser/lab06-vulnerable.png",
+        "transport": "Actual local Docker Compose over loopback HTTP",
+        "database": "PostgreSQL"
+      },
+      "test": "tests/browser/test_browser_labs.py::test_reflected_xss[vulnerable]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab06",
+      "variant": "hardened",
+      "observations": {
+        "browser": "Chromium",
+        "dom_marker": null,
+        "browser_execution_verified": true,
+        "screenshot": "artifacts/compose/browser/lab06-hardened.png",
+        "transport": "Actual local Docker Compose over loopback HTTP",
+        "database": "PostgreSQL"
+      },
+      "test": "tests/browser/test_browser_labs.py::test_reflected_xss[hardened]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab07",
+      "variant": "vulnerable",
+      "observations": {
+        "browser": "Chromium",
+        "browser_verified": true,
+        "forged_status": 200,
+        "observed_name": "Forged Local Name",
+        "transport": "Actual local Docker Compose over loopback HTTP",
+        "database": "PostgreSQL"
+      },
+      "test": "tests/browser/test_browser_labs.py::test_cross_origin_form[vulnerable]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab07",
+      "variant": "hardened",
+      "observations": {
+        "browser": "Chromium",
+        "browser_verified": true,
+        "forged_status": 403,
+        "observed_name": "Alice Morgan",
+        "transport": "Actual local Docker Compose over loopback HTTP",
+        "database": "PostgreSQL"
+      },
+      "test": "tests/browser/test_browser_labs.py::test_cross_origin_form[hardened]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab01",
+      "variant": "vulnerable",
+      "observations": {
+        "browser": "Chromium",
+        "foreign_ui_status": 200,
+        "own_ui_visible": true,
+        "screenshot": "artifacts/compose/browser/lab01-vulnerable.png",
+        "transport": "Actual local Docker Compose over loopback HTTP",
+        "database": "PostgreSQL"
+      },
+      "test": "tests/browser/test_browser_labs.py::test_object_authorization_in_browser[vulnerable]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab01",
+      "variant": "hardened",
+      "observations": {
+        "browser": "Chromium",
+        "foreign_ui_status": 404,
+        "own_ui_visible": true,
+        "screenshot": "artifacts/compose/browser/lab01-hardened.png",
+        "transport": "Actual local Docker Compose over loopback HTTP",
+        "database": "PostgreSQL"
+      },
+      "test": "tests/browser/test_browser_labs.py::test_object_authorization_in_browser[hardened]",
+      "test_passed": true
+    }
+  ]
+}

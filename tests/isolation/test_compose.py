@@ -84,3 +84,11 @@ def test_hardened_image_cannot_import_training_policy():
     assert "apps/vulnerable" not in hardened + business
     assert "apps/hardened" in hardened
     assert "apps.vulnerable" not in (ROOT / "apps/hardened/main.py").read_text()
+
+
+def test_native_entry_points_have_distinct_database_defaults(monkeypatch):
+    monkeypatch.delenv("AEGIS_DATABASE_URL", raising=False)
+    from apps.core.config import Settings
+    from apps.vulnerable.main import TrainingSettings
+
+    assert Settings().database_url != TrainingSettings().database_url

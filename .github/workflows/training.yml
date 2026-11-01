@@ -45,6 +45,9 @@ jobs:
         run: |
           python -m scripts.lab reset
           python -m scripts.lab inspect
+          python -m scripts.lab reset
+          python -m scripts.lab inspect
+          python -c "import json,urllib.request; data=json.load(urllib.request.urlopen('http://127.0.0.1:18082/api/state', timeout=5)); assert data['progress']['lab12']['notes']=='Synthetic restart persistence probe'"
       - name: Remove the exact project containers
         if: always()
         run: docker compose -p aegis -f compose.yml down --remove-orphans

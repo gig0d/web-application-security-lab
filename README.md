@@ -14,7 +14,7 @@ The source implements all twelve scenarios and the business workflows below. Loc
 
 ## Start locally
 
-Requirements: Python 3.13, Git, Docker Desktop with Linux containers and Compose v2. Allow approximately 4 GB RAM and several GB of disk for the full stack. Install the tools according to [Windows](docs/installation-windows.md) or [Linux](docs/installation-linux.md) instructions.
+Requirements: Python 3.13, Git, Docker Desktop with Linux containers, Engine 28 or later, and Compose v2. Allow approximately 4 GB RAM and several GB of disk for the full stack. Install the tools according to [Windows](docs/installation-windows.md) or [Linux](docs/installation-linux.md) instructions.
 
 ```powershell
 git clone https://github.com/gig0d/web-application-security-lab.git

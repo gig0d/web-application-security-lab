@@ -1,6 +1,6 @@
 # Linux installation
 
-Use Python 3.13, Git and a local Docker Engine/Desktop with Compose v2. Running an external Docker daemon is outside the lab's authorized scope. Confirm `python3.13 --version`, `docker version`, `docker compose version` and `docker context inspect` before setup. Follow your distribution's supported installation instructions for these prerequisites; the project does not modify host package repositories or firewall policy.
+Use Python 3.13, Git and a local Docker Engine/Desktop with Engine 28 or later and Compose v2. Running an external Docker daemon is outside the lab's authorized scope. Confirm `python3.13 --version`, `docker version`, `docker compose version` and `docker context inspect` before setup. Follow your distribution's supported installation instructions for these prerequisites; the project does not modify host package repositories or firewall policy.
 
 ```bash
 git clone https://github.com/gig0d/web-application-security-lab.git

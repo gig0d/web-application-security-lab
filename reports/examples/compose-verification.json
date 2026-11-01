@@ -1,0 +1,209 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-11-01T09:05:01.332049+00:00",
+  "transport": "Actual local Docker Compose with independent PostgreSQL and internal simulator",
+  "checks": [
+    {
+      "lab_id": "lab01",
+      "variant": "vulnerable",
+      "passed": true,
+      "observation": {
+        "foreign_api_status": 200,
+        "foreign_ui_status": 200,
+        "own_status": 200
+      }
+    },
+    {
+      "lab_id": "lab01",
+      "variant": "hardened",
+      "passed": true,
+      "observation": {
+        "foreign_api_status": 404,
+        "foreign_ui_status": 404,
+        "own_status": 200
+      }
+    },
+    {
+      "lab_id": "lab02",
+      "variant": "vulnerable",
+      "passed": true,
+      "observation": {
+        "foreign_status": 200,
+        "own_status": 200
+      }
+    },
+    {
+      "lab_id": "lab02",
+      "variant": "hardened",
+      "passed": true,
+      "observation": {
+        "foreign_status": 404,
+        "own_status": 200
+      }
+    },
+    {
+      "lab_id": "lab03",
+      "variant": "vulnerable",
+      "passed": true,
+      "observation": {
+        "assignment_status": 200,
+        "customer_form_hidden": true
+      }
+    },
+    {
+      "lab_id": "lab03",
+      "variant": "hardened",
+      "passed": true,
+      "observation": {
+        "assignment_status": 403,
+        "customer_form_hidden": true
+      }
+    },
+    {
+      "lab_id": "lab04",
+      "variant": "vulnerable",
+      "passed": true,
+      "observation": {
+        "payload_status": 200,
+        "returned_ticket_ids": [
+          1,
+          2
+        ],
+        "legitimate_search_count": 1
+      }
+    },
+    {
+      "lab_id": "lab04",
+      "variant": "hardened",
+      "passed": true,
+      "observation": {
+        "payload_status": 200,
+        "returned_ticket_ids": [],
+        "legitimate_search_count": 1
+      }
+    },
+    {
+      "lab_id": "lab07",
+      "variant": "vulnerable",
+      "passed": true,
+      "observation": {
+        "forged_status": 200,
+        "state_changed": true
+      }
+    },
+    {
+      "lab_id": "lab07",
+      "variant": "hardened",
+      "passed": true,
+      "observation": {
+        "forged_status": 403,
+        "state_changed": false
+      }
+    },
+    {
+      "lab_id": "lab08",
+      "variant": "vulnerable",
+      "passed": true,
+      "observation": {
+        "equal_errors": false,
+        "bounded_attempt_statuses": [
+          401,
+          401,
+          401,
+          401,
+          401
+        ]
+      }
+    },
+    {
+      "lab_id": "lab08",
+      "variant": "hardened",
+      "passed": true,
+      "observation": {
+        "equal_errors": true,
+        "bounded_attempt_statuses": [
+          401,
+          401,
+          401,
+          401,
+          429
+        ]
+      }
+    },
+    {
+      "lab_id": "lab09",
+      "variant": "vulnerable",
+      "passed": true,
+      "observation": {
+        "logout_status": 200,
+        "replay_status": 200
+      }
+    },
+    {
+      "lab_id": "lab09",
+      "variant": "hardened",
+      "passed": true,
+      "observation": {
+        "logout_status": 200,
+        "replay_status": 401
+      }
+    },
+    {
+      "lab_id": "lab10",
+      "variant": "vulnerable",
+      "passed": true,
+      "observation": {
+        "unsafe_filename_status": 201,
+        "safe_upload_status": 201
+      }
+    },
+    {
+      "lab_id": "lab10",
+      "variant": "hardened",
+      "passed": true,
+      "observation": {
+        "unsafe_filename_status": 422,
+        "safe_upload_status": 201
+      }
+    },
+    {
+      "lab_id": "lab11",
+      "variant": "vulnerable",
+      "passed": true,
+      "observation": {
+        "private_status": 200,
+        "public_status": 200
+      }
+    },
+    {
+      "lab_id": "lab11",
+      "variant": "hardened",
+      "passed": true,
+      "observation": {
+        "private_status": 403,
+        "public_status": 200
+      }
+    },
+    {
+      "lab_id": "lab12",
+      "variant": "vulnerable",
+      "passed": true,
+      "observation": {
+        "error_status": 500,
+        "csp_present": false,
+        "generic_error": false
+      }
+    },
+    {
+      "lab_id": "lab12",
+      "variant": "hardened",
+      "passed": true,
+      "observation": {
+        "error_status": 500,
+        "csp_present": true,
+        "generic_error": true
+      }
+    }
+  ],
+  "restricted_role_and_read_only_transaction": true
+}

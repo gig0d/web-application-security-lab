@@ -14,6 +14,30 @@ from scripts.lab import check_config, check_local_docker
 SCOPE = {"vulnerable": "http://127.0.0.1:18080", "hardened": "http://127.0.0.1:18081"}
 
 
+async def verify_control_actions() -> None:
+    async with httpx.AsyncClient(
+        base_url="http://127.0.0.1:18082", timeout=15, trust_env=False
+    ) as client:
+        await client.get("/")
+        token = client.cookies.get("aegis_control_csrf")
+        headers = {"X-Aegis-Token": token or ""}
+        reset = await client.post(
+            "/api/reset-data",
+            json={"selection": "isolated-pair", "confirmation": "RESET SYNTHETIC HARBORDESK"},
+            headers=headers,
+        )
+        if reset.status_code != 200 or reset.json().get("outcomes") != {
+            "vulnerable": "reset",
+            "hardened": "reset",
+        }:
+            raise RuntimeError("Actual controller synthetic reset failed")
+        evaluation = await client.post(
+            "/api/evaluate/lab01", json={"selection": "isolated-pair"}, headers=headers
+        )
+        if evaluation.status_code != 200 or evaluation.json().get("status") != "passed":
+            raise RuntimeError("Actual controller paired evaluation failed")
+
+
 async def verify() -> list[dict[str, object]]:
     results = []
     for lab_id in (f"lab{n:02}" for n in range(1, 13) if n not in {5, 6}):
@@ -64,6 +88,15 @@ async def persistence_probe() -> tuple[int, dict[str, object]]:
             raise RuntimeError("PostgreSQL-backed ticket creation failed")
         ticket_id = int(created.json()["id"])
     async with httpx.AsyncClient(timeout=5, trust_env=False) as client:
+        await client.get("http://127.0.0.1:18082/")
+        token = client.cookies.get("aegis_control_csrf")
+        saved = await client.post(
+            "http://127.0.0.1:18082/api/progress/lab12",
+            json={"notes": "Synthetic restart persistence probe", "reviewed": False},
+            headers={"X-Aegis-Token": token or ""},
+        )
+        if saved.status_code != 200:
+            raise RuntimeError("Control-center persistence fixture could not be saved")
         progress = (await client.get("http://127.0.0.1:18082/api/state")).json()
     return ticket_id, progress
 
@@ -91,6 +124,7 @@ def main() -> None:
     errors = effective_runtime()
     if errors:
         raise SystemExit("; ".join(errors))
+    asyncio.run(verify_control_actions())
     results = asyncio.run(verify())
     ticket_id, progress = asyncio.run(persistence_probe())
     compose(["restart", "vulnerable", "hardened", "control"])
