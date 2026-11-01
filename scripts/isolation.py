@@ -80,6 +80,12 @@ def validate(config: dict[str, Any]) -> list[str]:
             errors.append(f"{name}: no-new-privileges required")
         if not name.endswith("-db") and not service.get("read_only"):
             errors.append(f"{name}: read-only root filesystem required")
+        for temporary in service.get("tmpfs", []):
+            if not isinstance(temporary, str) or temporary.split(":", 1)[0] not in {
+                "/tmp",
+                "/home/zap",
+            }:
+                errors.append(f"{name}: invalid temporary filesystem mount")
         if not service.get("pids_limit") or not service.get("mem_limit") or not service.get("cpus"):
             errors.append(f"{name}: execution limits required")
         if set(service.get("networks", [])) != NETWORKS.get(name, set()):

@@ -46,6 +46,12 @@ def test_external_network_rejected():
     assert validate(data)
 
 
+def test_unquoted_tmpfs_options_are_rejected():
+    data = copy.deepcopy(config())
+    data["services"]["hardened"]["tmpfs"] = ["/tmp:size=32m", "mode=1777"]
+    assert validate(data)
+
+
 def test_database_ports_and_extra_services_rejected():
     data = copy.deepcopy(config())
     data["services"]["vulnerable-db"]["ports"] = ["127.0.0.1:5432:5432"]
