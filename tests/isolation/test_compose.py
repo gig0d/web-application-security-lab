@@ -44,6 +44,9 @@ def test_external_network_rejected():
     data = copy.deepcopy(config())
     data["networks"]["vulnerable-net"]["internal"] = False
     assert validate(data)
+    data = copy.deepcopy(config())
+    data["networks"]["vulnerable-net"]["driver_opts"] = {}
+    assert validate(data)
 
 
 def test_unquoted_tmpfs_options_are_rejected():

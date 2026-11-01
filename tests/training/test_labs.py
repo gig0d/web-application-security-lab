@@ -46,9 +46,11 @@ def test_lab03_roles(env, evidence):
     page = env.client.get("/tickets/1")
     assert 'id="assign"' not in page.text
     response = env.client.post(
-        "/api/admin/tickets/1/assign", headers=env.headers, json={"assignee_id": 3}
+        "/api/admin/tickets/1/assign", headers=env.headers, json={"assignee_id": 4}
     )
     assert response.status_code == (403 if env.hard else 200)
+    assigned = env.client.get("/api/tickets/1").json()["assignee_id"]
+    assert assigned == (3 if env.hard else 4)
     admin = authenticate(env, "admin")
     assert (
         env.client.post(
@@ -60,6 +62,7 @@ def test_lab03_roles(env, evidence):
         "lab03",
         env.variant,
         customer_assignment=response.status_code,
+        assignee_after=assigned,
         hidden_form=True,
         legitimate_admin=200,
     )

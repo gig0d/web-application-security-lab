@@ -22,6 +22,12 @@ def validate_plan(plan: dict[str, Any], active: bool) -> list[str]:
             errors.append("Authentication target rejected")
     seen_active = False
     active_minutes = 0
+    seeded_urls = {
+        request.get("url")
+        for job in plan.get("jobs", [])
+        if job.get("type") == "requestor"
+        for request in job.get("requests", [])
+    }
     for job in plan.get("jobs", []):
         kind = job.get("type")
         if kind not in {
@@ -46,6 +52,10 @@ def validate_plan(plan: dict[str, Any], active: bool) -> list[str]:
             errors.append("Spider must be bounded to one minute")
         if kind == "activeScan":
             seen_active = True
+            if parameters.get("url") not in seeded_urls:
+                errors.append(
+                    "Every active start URL must be explicitly seeded in the requestor job"
+                )
             if parameters.get("url") not in {APPROVED + "/search", APPROVED + "/api/tickets"}:
                 errors.append("Active scan is limited to the two implemented search sinks")
             active_minutes += parameters.get("maxScanDurationInMins", 0)

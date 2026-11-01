@@ -89,11 +89,17 @@ async def check(client: httpx.AsyncClient, lab_id: str, variant: str) -> dict[st
     elif lab_id == "lab03":
         ui = await client.get("/tickets/1")
         response = await client.post(
-            "/api/admin/tickets/1/assign", json={"assignee_id": 3}, headers=headers
+            "/api/admin/tickets/1/assign", json={"assignee_id": 4}, headers=headers
         )
-        passed = 'id="assign"' not in ui.text and response.status_code == (403 if hard else 200)
+        assigned = (await client.get("/api/tickets/1")).json()["assignee_id"]
+        passed = (
+            'id="assign"' not in ui.text
+            and response.status_code == (403 if hard else 200)
+            and assigned == (3 if hard else 4)
+        )
         observation = {
             "assignment_status": response.status_code,
+            "assignee_after": assigned,
             "customer_form_hidden": 'id="assign"' not in ui.text,
         }
     elif lab_id == "lab04":

@@ -16,13 +16,13 @@ Only the repository-created local HarborDesk pair is authorized: vulnerable at h
 
 1. Sign in as alice and observe that /tickets/1 has no assignment form.
 
-2. POST /api/admin/tickets/1/assign with assignee_id 3 and Alice's CSRF token.
+2. POST /api/admin/tickets/1/assign with assignee_id 4 and Alice's CSRF token.
 
 3. Repeat as admin to verify the legitimate administrative workflow.
 
 ## Expected comparison
 
-Training accepts Alice's direct request despite the hidden form; hardened returns 403. A real admin can assign in both.
+Training changes ticket 1 from support employee 3 to administrator 4 despite Alice's hidden form; hardened returns 403 and keeps assignee 3. A real admin can assign in both.
 
 Record actual status codes, returned identifiers, state changes or browser markers. An expected result is not evidence until the corresponding action executes. The control center records bounded HTTP checks; the browser suite records real browser behavior. Consult the verification record for what has actually run.
 

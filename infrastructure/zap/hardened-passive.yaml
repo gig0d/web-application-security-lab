@@ -1,69 +1,104 @@
-# Authorized only through `python -m scripts.lab scan --target hardened`.
-# Passive inspection: fetch/crawl requests are sent; no attack payload job is present.
+# Fixed local scope. Explicitly seed every active starting URL before scanning.
 env:
   contexts:
-    - name: harbordesk-hardened
-      urls: ["http://hardened:8080"]
-      includePaths: ["http://hardened:8080/.*"]
-      excludePaths: ["http://hardened:8080/api/admin/.*", "http://hardened:8080/api/logout"]
-      authentication:
-        method: json
-        parameters:
-          loginPageUrl: http://hardened:8080/
-          loginRequestUrl: http://hardened:8080/api/login
-          loginRequestBody: '{"username":"{%username%}","password":"{%password%}"}'
-        verification:
-          method: poll
-          pollUrl: http://hardened:8080/api/session
-          pollFrequency: 10
-          pollUnits: requests
-          loggedInRegex: '"username"\s*:\s*"alice"'
-          loggedOutRegex: 'Authentication required'
-      sessionManagement: {method: cookie}
-      users:
-        - name: alice
-          credentials: {username: alice, password: "HarborDesk-Local-Only!42"}
+  - name: harbordesk-hardened
+    urls:
+    - http://hardened:8080
+    includePaths:
+    - http://hardened:8080/.*
+    excludePaths:
+    - http://hardened:8080/api/admin/.*
+    - http://hardened:8080/api/logout
+    authentication:
+      method: json
+      parameters:
+        loginPageUrl: http://hardened:8080/
+        loginRequestUrl: http://hardened:8080/api/login
+        loginRequestBody: '{"username":"{%username%}","password":"{%password%}"}'
+      verification:
+        method: poll
+        pollUrl: http://hardened:8080/api/session
+        pollFrequency: 10
+        pollUnits: requests
+        loggedInRegex: '"username"\s*:\s*"alice"'
+        loggedOutRegex: Authentication required
+    sessionManagement:
+      method: cookie
+    users:
+    - name: alice
+      credentials:
+        username: alice
+        password: HarborDesk-Local-Only!42
   parameters:
     failOnError: true
     failOnWarning: true
     progressToStdout: true
 jobs:
-  - type: passiveScan-config
-    parameters: {scanOnlyInScope: true, maxAlertsPerRule: 10}
-  - type: requestor
-    parameters: {user: alice}
-    requests:
-      - {url: "http://hardened:8080/api/session", method: GET, responseCode: 200}
-      - {url: "http://hardened:8080/portal", method: GET, responseCode: 200}
-      - {url: "http://hardened:8080/tickets/1", method: GET, responseCode: 200}
-      - {url: "http://hardened:8080/api/tickets?q=Workspace", method: GET, responseCode: 200}
-      - {url: "http://hardened:8080/search?q=Workspace", method: GET, responseCode: 200}
-      - {url: "http://hardened:8080/api/attachments/1", method: GET, responseCode: 200}
-  - type: spider
-    parameters:
-      context: harbordesk-hardened
-      user: alice
-      maxDuration: 1
-      maxDepth: 3
-      maxChildren: 20
-      postForm: false
-  - type: passiveScan-wait
-    parameters: {maxDuration: 1}
-  - type: report
-    parameters:
-      template: traditional-json
-      reportDir: /zap/wrk
-      reportFile: hardened-passive
-      reportTitle: Aegis hardened passive observations
-      displayReport: false
-    sites: ["http://hardened:8080"]
-  - type: report
-    parameters:
-      template: traditional-html
-      reportDir: /zap/wrk
-      reportFile: hardened-passive
-      reportTitle: Aegis hardened passive observations
-      displayReport: false
-    sites: ["http://hardened:8080"]
-  - type: exitStatus
-    parameters: {errorLevel: High, warnLevel: Medium, okExitValue: 0, warnExitValue: 0, errorExitValue: 1}
+- type: passiveScan-config
+  parameters:
+    scanOnlyInScope: true
+    maxAlertsPerRule: 10
+- type: requestor
+  parameters:
+    user: alice
+  requests:
+  - url: http://hardened:8080/api/session
+    method: GET
+    responseCode: 200
+  - url: http://hardened:8080/portal
+    method: GET
+    responseCode: 200
+  - url: http://hardened:8080/tickets/1
+    method: GET
+    responseCode: 200
+  - url: http://hardened:8080/api/tickets?q=Workspace
+    method: GET
+    responseCode: 200
+  - url: http://hardened:8080/search?q=Workspace
+    method: GET
+    responseCode: 200
+  - url: http://hardened:8080/api/attachments/1
+    method: GET
+    responseCode: 200
+  - url: http://hardened:8080/api/tickets
+    method: GET
+    responseCode: 200
+  - url: http://hardened:8080/search
+    method: GET
+    responseCode: 200
+- type: spider
+  parameters:
+    context: harbordesk-hardened
+    user: alice
+    maxDuration: 1
+    maxDepth: 3
+    maxChildren: 20
+    postForm: false
+- type: passiveScan-wait
+  parameters:
+    maxDuration: 1
+- type: report
+  parameters:
+    template: traditional-json
+    reportDir: /zap/wrk
+    reportFile: hardened-passive
+    reportTitle: Aegis hardened passive observations
+    displayReport: false
+  sites:
+  - http://hardened:8080
+- type: report
+  parameters:
+    template: traditional-html
+    reportDir: /zap/wrk
+    reportFile: hardened-passive
+    reportTitle: Aegis hardened passive observations
+    displayReport: false
+  sites:
+  - http://hardened:8080
+- type: exitStatus
+  parameters:
+    errorLevel: High
+    warnLevel: Medium
+    okExitValue: 0
+    warnExitValue: 0
+    errorExitValue: 1

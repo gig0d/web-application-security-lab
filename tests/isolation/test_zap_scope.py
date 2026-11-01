@@ -25,3 +25,13 @@ def test_active_requires_selection():
         if job["type"] == "activeScan":
             job["parameters"]["maxScanDurationInMins"] = 0
     assert validate_plan(plan, True)
+
+
+def test_active_start_urls_must_exist_in_seeded_site_tree():
+    plan = yaml.safe_load((ROOT / "infrastructure/zap/hardened-active.yaml").read_text())
+    for job in plan["jobs"]:
+        if job["type"] == "requestor":
+            job["requests"] = [
+                r for r in job["requests"] if r["url"] != "http://hardened:8080/api/tickets"
+            ]
+    assert validate_plan(plan, True)

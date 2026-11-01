@@ -14,6 +14,7 @@ PASSWORD = re.compile(r'("password"\s*:\s*")[^"]*(")')
 
 
 def redact_text(value: str) -> str:
+    value = value.replace("HarborDesk-Local-Only!42", "[REDACTED]")
     return PASSWORD.sub(
         r"\1[REDACTED]\2", CSRF.sub(r"\1[REDACTED]\2", COOKIE.sub(r"\1[REDACTED]", value))
     )

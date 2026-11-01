@@ -26,6 +26,8 @@ The lifecycle CLI rejects nonlocal Docker contexts (`tcp://`, SSH or other remot
 
 ## Verification limits
 
+The three internal networks also use Docker's `isolated` gateway mode: no host bridge gateway address is assigned. This closes host-bridge access that an ordinary `internal: true` network can still allow. Only the ingress relay uses the separate NAT bridge. Source and effective validation enforce isolated gateways and the tested IPv4-only topology. Engine 28 or later is mandatory, both for this mode and the documented localhost-publication boundary.
+
 An internal network flag is a control configuration, not a packet-capture result. Verify the effective configuration on the actual Docker Desktop version before accepting containment. Container networking on Windows depends on Docker's Linux VM; firewall, VPN and daemon changes can alter behavior. A hostile host administrator or a compromised Docker daemon is outside this lab's threat boundary. Loopback services are accessible to local processes, and local HTTP does not provide TLS confidentiality.
 
 Do not test egress by contacting a public address or real cloud metadata. Inspect effective routes/network flags and use only repository-owned internal fixtures for any connectivity experiment. There is no cloud/public deployment procedure for the vulnerable application.

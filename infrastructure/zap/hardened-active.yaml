@@ -1,4 +1,4 @@
-# Explicit --active selection. Fixed HTML and SQL search sinks, three minutes combined.
+# Fixed local scope. Explicitly seed every active starting URL before scanning.
 env:
   contexts:
   - name: harbordesk-hardened
@@ -60,6 +60,12 @@ jobs:
   - url: http://hardened:8080/api/attachments/1
     method: GET
     responseCode: 200
+  - url: http://hardened:8080/api/tickets
+    method: GET
+    responseCode: 200
+  - url: http://hardened:8080/search
+    method: GET
+    responseCode: 200
 - type: spider
   parameters:
     context: harbordesk-hardened
@@ -86,6 +92,7 @@ jobs:
       name: Reflected cross-site scripting
       strength: Low
       threshold: Medium
+  name: html-search-xss
 - type: activeScan
   parameters:
     context: harbordesk-hardened
@@ -104,6 +111,7 @@ jobs:
       name: SQL injection
       strength: Low
       threshold: Medium
+  name: ticket-api-sql
 - type: passiveScan-wait
   parameters:
     maxDuration: 1

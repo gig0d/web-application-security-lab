@@ -9,6 +9,8 @@ from typing import Any
 
 import yaml
 
+from scripts.sanitize_evidence import redact_text
+
 ROOT = Path(__file__).resolve().parents[1]
 SERVICES = {
     "vulnerable-db",
@@ -50,6 +52,14 @@ def validate(config: dict[str, Any]) -> list[str]:
             errors.append(f"{name}: network must be internal and project-owned")
         if network.get("name", f"aegis_{name}") != f"aegis_{name}":
             errors.append(f"{name}: network name must belong to Aegis")
+        if (
+            name != "ingress-net"
+            and network.get("driver_opts", {}).get("com.docker.network.bridge.gateway_mode_ipv4")
+            != "isolated"
+        ):
+            errors.append(f"{name}: isolated gateway mode is required to remove host bridge access")
+        if network.get("enable_ipv6"):
+            errors.append(f"{name}: this lab validates IPv4-only networks")
     volumes = config.get("volumes", {})
     if set(volumes) != {"vulnerable-data", "hardened-data", "progress-data"}:
         errors.append("Unexpected data volume inventory")
@@ -162,9 +172,20 @@ def docker(arguments: list[str]) -> str:
         check=False,
     )
     if result.returncode:
-        # Docker output may include interpolated credentials: deliberately suppress it.
+        # Keep bounded, redacted diagnostics instead of exposing interpolated secrets.
+        diagnostic = result.stdout[-40000:] + result.stderr[-40000:]
+        environment_file = ROOT / ".env"
+        if environment_file.exists():
+            for line in environment_file.read_text(encoding="utf-8").splitlines():
+                if "=" in line and not line.startswith("#"):
+                    value = line.split("=", 1)[1].strip()
+                    if len(value) >= 8:
+                        diagnostic = diagnostic.replace(value, "[REDACTED]")
+        output = ROOT / "artifacts/diagnostics"
+        output.mkdir(parents=True, exist_ok=True)
+        (output / "docker-last-error.log").write_text(redact_text(diagnostic), encoding="utf-8")
         raise RuntimeError(
-            "Docker command failed; inspect Docker Desktop and named Aegis resources"
+            "Docker command failed; see redacted artifacts/diagnostics/docker-last-error.log"
         )
     return result.stdout
 
@@ -229,6 +250,14 @@ def effective_runtime(required_services: set[str] | None = None) -> list[str]:
     for network in json.loads(docker(["network", "inspect", *sorted(network_names)])):
         if network["Internal"] != (network["Name"] != "aegis_ingress-net"):
             errors.append("Effective network allows external egress")
+        if (
+            network["Name"] != "aegis_ingress-net"
+            and network.get("Options", {}).get("com.docker.network.bridge.gateway_mode_ipv4")
+            != "isolated"
+        ):
+            errors.append("Effective internal network has a host-facing gateway")
+        if network.get("EnableIPv6"):
+            errors.append("Unexpected effective IPv6 network")
     return errors
 
 

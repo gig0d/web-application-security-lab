@@ -51,14 +51,16 @@ def servers():
             thread.join(5)
             listener.close()
             pytest.fail("Local test server did not become ready within 10 seconds")
-        owned.append((server, thread, listener))
+        owned.append((server, thread, listener, app))
         return f"http://127.0.0.1:{port}"
 
     yield start
-    for server, thread, listener in reversed(owned):
+    for server, thread, listener, app in reversed(owned):
         server.should_exit = True
         thread.join(5)
         listener.close()
+        if hasattr(app.state, "engine"):
+            app.state.engine.dispose()
 
 
 @pytest.fixture(params=["vulnerable", "hardened"])
