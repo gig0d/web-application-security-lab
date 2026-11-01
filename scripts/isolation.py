@@ -160,13 +160,14 @@ def compose(arguments: list[str]) -> str:
     return docker(["compose", "-p", "aegis", "-f", str(ROOT / "compose.yml"), *arguments])
 
 
-def effective_runtime() -> list[str]:
+def effective_runtime(required_services: set[str] | None = None) -> list[str]:
     errors = []
     ids = compose(["ps", "-aq"]).split()
     if not ids:
         return ["No Aegis containers to inspect"]
     objects = json.loads(docker(["inspect", *ids]))
     running = set()
+    network_names: set[str] = set()
     for container in objects:
         name = container["Config"]["Labels"].get("com.docker.compose.service")
         if name not in SERVICES:
@@ -190,22 +191,24 @@ def effective_runtime() -> list[str]:
                 if entry["HostIp"] != "127.0.0.1" or entry["HostPort"] != str(PORTS.get(name)):
                     errors.append(f"{name}: unsafe effective host binding")
         actual = set(container["NetworkSettings"]["Networks"])
+        network_names.update(actual)
         if actual != {f"aegis_{n}" for n in NETWORKS[name]}:
             errors.append(f"{name}: unexpected effective network membership")
-    if (
-        not {"vulnerable", "hardened", "control", "simulator", "vulnerable-db", "hardened-db"}
-        <= running
-    ):
+    required = (
+        required_services
+        if required_services is not None
+        else {
+            "vulnerable",
+            "hardened",
+            "control",
+            "simulator",
+            "vulnerable-db",
+            "hardened-db",
+        }
+    )
+    if not required <= running:
         errors.append("Required Aegis services are not running")
-    for network in json.loads(
-        docker(
-            [
-                "network",
-                "inspect",
-                *[f"aegis_{n}" for n in ("vulnerable-net", "hardened-net", "control-net")],
-            ]
-        )
-    ):
+    for network in json.loads(docker(["network", "inspect", *sorted(network_names)])):
         if not network["Internal"]:
             errors.append("Effective network allows external egress")
     return errors
@@ -215,6 +218,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--resolved", action="store_true")
     parser.add_argument("--runtime", action="store_true")
+    parser.add_argument("--scope", choices=["full", "hardened"], default="full")
     args = parser.parse_args()
     config = (
         json.loads(compose(["config", "--format", "json"]))
@@ -223,7 +227,8 @@ def main() -> None:
     )
     errors = validate(config)
     if args.runtime:
-        errors.extend(effective_runtime())
+        required = {"hardened", "hardened-db", "simulator"} if args.scope == "hardened" else None
+        errors.extend(effective_runtime(required))
     if errors:
         raise SystemExit("Isolation rejected:\n" + "\n".join(errors))
     print(

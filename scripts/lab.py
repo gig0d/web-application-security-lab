@@ -7,6 +7,7 @@ import secrets
 import yaml
 
 from scripts.isolation import ROOT, compose, docker, effective_runtime, validate
+from scripts.zap_scope import validate_plan
 
 
 def check_local_docker() -> None:
@@ -84,11 +85,17 @@ def main() -> None:
     elif args.operation == "scan":
         if args.target != "hardened":
             raise SystemExit("Select --target hardened explicitly before any scan")
-        errors = effective_runtime()
+        errors = effective_runtime({"hardened", "hardened-db", "simulator"})
         if errors:
             raise SystemExit("Scan rejected: " + "; ".join(errors))
         (ROOT / "artifacts/zap").mkdir(parents=True, exist_ok=True)
         plan = "hardened-active.yaml" if args.active else "hardened-passive.yaml"
+        plan_path = ROOT / "infrastructure/zap" / plan
+        plan_errors = validate_plan(yaml.safe_load(plan_path.read_text()), args.active)
+        if plan_errors:
+            raise SystemExit("Scan plan rejected: " + "; ".join(plan_errors))
+        expected_report = ROOT / "artifacts/zap" / plan.replace(".yaml", ".json")
+        previous_mtime = expected_report.stat().st_mtime_ns if expected_report.exists() else 0
         compose(
             [
                 "--profile",
@@ -102,7 +109,7 @@ def main() -> None:
                 f"/zap/plans/{plan}",
             ]
         )
-        if not list((ROOT / "artifacts/zap").glob("*.json")):
+        if not expected_report.exists() or expected_report.stat().st_mtime_ns <= previous_mtime:
             raise SystemExit("Scanner exited without the expected JSON report")
         print("Actual scan artifacts are in artifacts/zap; inspect findings and limitations")
 

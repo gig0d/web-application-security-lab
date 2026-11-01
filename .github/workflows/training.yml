@@ -1,0 +1,50 @@
+name: Explicit isolated training verification
+
+on:
+  workflow_dispatch:
+    inputs:
+      approved_scope:
+        description: Repository-created isolated local services only
+        type: choice
+        options: [isolated-aegis]
+        required: true
+      active_hardened_search:
+        description: Also run bounded active ZAP against local hardened search
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  paired-laboratories:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.runtime/browsers
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with: {python-version: "3.13.18"}
+      - run: python -m pip install --require-hashes -r requirements-dev.lock
+      - run: python -m playwright install --with-deps chromium
+      - run: python -m pytest tests/training tests/browser --junitxml=artifacts/training/junit.xml
+      - run: python -m scripts.lab init
+      - run: python -m scripts.lab up
+      - run: python -m scripts.lab inspect
+      - name: Run explicitly selected active check
+        if: inputs.active_hardened_search
+        run: |
+          chmod 0777 artifacts/zap
+          python -m scripts.lab scan --target hardened --active
+      - name: Restore and inspect repeatable business fixtures
+        run: |
+          python -m scripts.lab reset
+          python -m scripts.lab inspect
+      - name: Remove the exact project containers
+        if: always()
+        run: docker compose -p aegis -f compose.yml down --remove-orphans
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with: {name: isolated-training-evidence, path: artifacts/, retention-days: 14}

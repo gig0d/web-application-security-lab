@@ -34,7 +34,7 @@ class TrainingPolicy(SecurePolicy):
             "SELECT id, owner_id, assignee_id, title, description, status FROM tickets "
             f"WHERE owner_id = {int(user.id)} AND title LIKE '%{query}%' LIMIT 50"
         )
-        return [dict(row) for row in db.execute(text(sql)).mappings()]
+        return [dict(row) for row in db.execute(text(sql)).mappings().fetchmany(50)]
 
     def csrf(self, request: Request, session: LoginSession) -> None:
         pass  # LAB07: cross-origin state change accepted without token.

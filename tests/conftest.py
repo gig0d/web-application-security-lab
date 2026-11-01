@@ -20,6 +20,10 @@ from apps.vulnerable.policy import TrainingPolicy
 EVIDENCE = []
 
 
+def pytest_addoption(parser):
+    parser.addoption("--evidence-output", default="artifacts/tests/evidence.json")
+
+
 @pytest.fixture(scope="session")
 def seeded_database(tmp_path_factory):
     root = tmp_path_factory.mktemp("fixture")
@@ -100,9 +104,11 @@ def pytest_runtest_makereport(item, call):
 def pytest_sessionfinish(session, exitstatus):
     from datetime import UTC, datetime
 
-    output = Path("artifacts/tests")
-    output.mkdir(parents=True, exist_ok=True)
-    (output / "evidence.json").write_text(
+    output = Path(session.config.getoption("--evidence-output"))
+    if not output.resolve().is_relative_to(Path("artifacts").resolve()):
+        raise ValueError("Test evidence must remain under the ignored artifacts directory")
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(
         json.dumps(
             {
                 "schema_version": 1,

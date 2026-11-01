@@ -1,3 +1,4 @@
+import json
 from datetime import UTC, datetime
 from typing import Any
 
@@ -84,7 +85,7 @@ def markdown(data: dict[str, Any]) -> str:
                 f"**Expected comparison:** {finding['expected_behavior']}",
                 "### Technical evidence",
                 "```json",
-                __import__("json").dumps(finding["evidence"], indent=2),
+                json.dumps(finding["evidence"], indent=2),
                 "```",
                 f"**Root cause:** {finding['root_cause']}",
                 f"**Remediation comparison:** {finding['implemented_remediation']}",
@@ -103,4 +104,6 @@ def markdown(data: dict[str, Any]) -> str:
             "The paired implementations make selected failures and remediations observable. Acceptance depends on executed evidence, including real browser and PostgreSQL/network verification.",
         ]
     )
-    return "\n\n".join(parts) + "\n"
+    # Keep table rows contiguous; prose blocks and numbered list items stay separated.
+    output = "\n\n".join(parts) + "\n"
+    return output.replace(" |\n\n|", " |\n|")
