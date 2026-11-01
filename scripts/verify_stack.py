@@ -30,7 +30,9 @@ async def verify_control_actions() -> None:
             "vulnerable": "reset",
             "hardened": "reset",
         }:
-            raise RuntimeError("Actual controller synthetic reset failed")
+            raise RuntimeError(
+                f"Actual controller synthetic reset failed: status={reset.status_code}, outcomes={reset.json().get('outcomes')}"
+            )
         evaluation = await client.post(
             "/api/evaluate/lab01", json={"selection": "isolated-pair"}, headers=headers
         )

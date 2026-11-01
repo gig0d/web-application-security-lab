@@ -120,7 +120,7 @@ def main() -> None:
                 mismatches.append(str(path.relative_to(ROOT)))
         else:
             path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(content, encoding="utf-8")
+            path.write_text(content, encoding="utf-8", newline="\n")
     if mismatches:
         raise SystemExit("Regenerate documentation: " + ", ".join(mismatches))
     if args.check:

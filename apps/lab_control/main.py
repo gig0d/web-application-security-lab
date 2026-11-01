@@ -134,7 +134,11 @@ def create_control(settings: Settings | None = None) -> FastAPI:
             for variant, base in TARGETS.items():
                 try:
                     async with httpx.AsyncClient(
-                        base_url=base, timeout=10, trust_env=False, follow_redirects=False
+                        base_url=base,
+                        timeout=10,
+                        trust_env=False,
+                        follow_redirects=False,
+                        headers={"Host": variant},
                     ) as client:
                         login = await client.post(
                             "/api/login", json={"username": "admin", "password": DEMO_PASSWORD}

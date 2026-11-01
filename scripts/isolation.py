@@ -32,7 +32,7 @@ NETWORKS = {
     "hardened-init": {"hardened-net"},
     "hardened": {"hardened-net"},
     "simulator": {"vulnerable-net", "hardened-net"},
-    "control": {"control-net", "vulnerable-net", "hardened-net"},
+    "control": {"control-net"},
     "zap-hardened": {"hardened-net"},
     "ingress": {"ingress-net", "vulnerable-net", "hardened-net", "control-net"},
 }

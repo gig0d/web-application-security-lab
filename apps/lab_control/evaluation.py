@@ -8,7 +8,7 @@ import httpx
 
 from apps.core.seed import DEMO_PASSWORD
 
-TARGETS = {"vulnerable": "http://vulnerable:8080", "hardened": "http://hardened:8080"}
+TARGETS = {"vulnerable": "http://ingress:8080", "hardened": "http://ingress:8081"}
 
 
 async def evaluate(lab_id: str, selection: str) -> dict[str, Any]:
@@ -28,7 +28,11 @@ async def evaluate(lab_id: str, selection: str) -> dict[str, Any]:
     for variant, base in TARGETS.items():
         try:
             async with httpx.AsyncClient(
-                base_url=base, timeout=5, follow_redirects=False, trust_env=False
+                base_url=base,
+                timeout=5,
+                follow_redirects=False,
+                trust_env=False,
+                headers={"Host": variant},
             ) as client:
                 observations.append(await check(client, lab_id, variant))
         except (httpx.HTTPError, KeyError, ValueError) as exc:

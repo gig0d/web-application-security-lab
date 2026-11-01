@@ -19,8 +19,7 @@ flowchart LR
     Ingress -->|fixed destination| V
     Ingress -->|fixed destination| H
     Control --> Progress
-    Control -->|fixed requests only| V
-    Control -->|fixed requests only| H
+    Control -->|two fixed internal relay ports| Ingress
     V --> VD
     H --> HD
     V --> Sim

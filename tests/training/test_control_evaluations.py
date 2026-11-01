@@ -19,9 +19,8 @@ def test_control_center_runs_real_paired_requests(
 
     def local_client(**kwargs):
         base = kwargs.get("base_url", "")
-        application = (
-            applications["hardened" if "hardened" in base else "vulnerable"] if base else simulator
-        )
+        variant = {"http://ingress:8080": "vulnerable", "http://ingress:8081": "hardened"}.get(base)
+        application = applications[variant] if variant else simulator
         return original(transport=httpx.ASGITransport(app=application), **kwargs)
 
     monkeypatch.setattr(httpx, "AsyncClient", local_client)
@@ -40,6 +39,26 @@ def test_control_center_runs_real_paired_requests(
             ]
             is True
         )
+        if lab_id == "lab01":
+            assert (
+                client.post(
+                    "/api/progress/lab01",
+                    json={"notes": "Reset persistence check", "reviewed": True},
+                    headers=headers,
+                ).status_code
+                == 200
+            )
+            restored = client.post(
+                "/api/reset-data",
+                json={"selection": "isolated-pair", "confirmation": "RESET SYNTHETIC HARBORDESK"},
+                headers=headers,
+            )
+            assert restored.status_code == 200
+            assert restored.json()["outcomes"] == {"vulnerable": "reset", "hardened": "reset"}
+            assert (
+                client.get("/api/state").json()["progress"]["lab01"]["notes"]
+                == "Reset persistence check"
+            )
         for observation in result["checks"]:
             evidence(
                 lab_id,

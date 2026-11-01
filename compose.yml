@@ -120,7 +120,7 @@ services:
     environment:
       AEGIS_PROGRESS_PATH: /data/progress.sqlite3
     volumes: ["progress-data:/data"]
-    networks: [control-net, vulnerable-net, hardened-net]
+    networks: [control-net]
     healthcheck:
       test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=2)"]
       interval: 10s

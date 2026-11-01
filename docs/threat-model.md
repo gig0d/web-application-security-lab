@@ -31,8 +31,7 @@ flowchart TB
             Ingress[Fixed TCP ingress: forwarding disabled]
             Simulator[Preview simulator: fixed responses]
             Notes[(Independent progress store)]
-            Controller --> V
-            Controller --> H
+            Controller -->|two fixed relay ports| Ingress
             Controller --> Notes
             V --> Simulator
             H --> Simulator
