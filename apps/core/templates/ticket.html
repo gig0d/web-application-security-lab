@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% block title %}Ticket {{ ticket.id }}{% endblock %}{% block content %}
+<a href="/portal" class="back">← Back to queue</a><div class="page-heading"><div><p class="eyebrow">SUPPORT / REQUEST #{{ ticket.id }}</p><h1>{{ ticket.title }}</h1><p class="lead">{{ ticket.description }}</p></div><span class="pill">{{ ticket.status }}</span></div>
+<div class="two-column"><section class="panel"><h2>Conversation</h2>{% for comment in comments %}<article class="comment">{% if comment.private %}<span class="pill">Private employee note</span>{% endif %}<div>{{ comment.rendered }}</div></article>{% else %}<p class="muted">No comments yet.</p>{% endfor %}
+<form id="comment" data-ticket="{{ ticket.id }}"><label>Add a comment<textarea name="body" required maxlength="4000"></textarea></label>{% if user.role != 'customer' %}<label class="inline"><input type="checkbox" name="private"> Private employee note</label>{% endif %}<button>Post comment</button></form></section>
+<section class="panel"><h2>Request details</h2><p>Owner #{{ ticket.owner_id }} · Assigned to #{{ ticket.assignee_id or '—' }}</p>
+<form id="ticket-status" data-ticket="{{ ticket.id }}"><label>Status<select name="status"><option>open</option><option>closed</option></select></label><button>Update status</button></form>
+{% if user.role == 'admin' %}<form id="assign" data-ticket="{{ ticket.id }}"><label>Assign to employee ID<input type="number" name="assignee_id" value="3" min="1" required></label><button>Assign ticket</button></form>{% endif %}
+<h3>Documents</h3><ul id="attachments" data-ticket="{{ ticket.id }}"></ul><form id="upload" data-ticket="{{ ticket.id }}"><label>Attach a text document<input type="file" name="file" accept=".txt" required></label><button>Upload document</button></form>
+<h3>Document preview</h3><button id="preview">Preview support handbook</button><pre id="preview-content"></pre></section></div>{% endblock %}

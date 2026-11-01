@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block title %}HarborDesk{% endblock %} · Aegis</title>
+<link rel="stylesheet" href="/static/app.css"><script src="/static/portal.js" defer></script>
+</head><body data-variant="{{ policy.label }}">
+<div class="environment {{ policy.label }}">{{ policy.warning }}</div>
+<header><a class="brand" href="/portal"><span class="brand-icon">H</span>HarborDesk<span class="subbrand">SUPPORT WORKSPACE</span></a>
+<nav><a href="/portal">Tickets</a><a href="/search">Search</a><a href="http://127.0.0.1:18082">Aegis labs ↗</a>
+{% if user %}<span class="identity">{{ user.display_name }} · {{ user.role }}</span><button id="logout" class="quiet">Sign out</button>{% endif %}</nav></header>
+{% if csrf %}<meta name="csrf-token" content="{{ csrf }}">{% endif %}
+<main>{% block content %}{% endblock %}<p id="feedback" role="status" aria-live="polite"></p></main>
+<footer>Aegis / HarborDesk <span>Fictional people. Disposable documents. Authorized learning.</span></footer>
+</body></html>

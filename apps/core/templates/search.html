@@ -1,0 +1,3 @@
+{% extends "base.html" %}{% block content %}<p class="eyebrow">WORKSPACE / SEARCH</p><h1>Find the right request.</h1>
+<form action="/search" method="get" class="inline"><label for="search-text">Search text</label><input id="search-text" name="q" maxlength="200"><button>Search</button></form>
+<section class="panel"><h2>Search feedback</h2><p id="search-echo">You searched for: {{ rendered_query }}</p><p class="muted">Use the ticket queue to filter matching requests. This page demonstrates safe and unsafe reflected rendering.</p></section>{% endblock %}

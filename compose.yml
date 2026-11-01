@@ -1,0 +1,159 @@
+name: aegis
+
+x-runtime: &runtime
+  user: "10001:10001"
+  read_only: true
+  cap_drop: [ALL]
+  security_opt: [no-new-privileges:true]
+  pids_limit: 128
+  mem_limit: 512m
+  cpus: 1.0
+  tmpfs: [/tmp:size=32m,mode=1777]
+  restart: unless-stopped
+
+x-db: &database
+  image: postgres:18.6-bookworm@sha256:5c4783a8cc3f0074912164f94dfa1be4e043438f0f707cf968d7af9a0d31a2c8
+  user: "999:999"
+  cap_drop: [ALL]
+  security_opt: [no-new-privileges:true]
+  pids_limit: 128
+  mem_limit: 512m
+  cpus: 1.0
+  shm_size: 128m
+  restart: unless-stopped
+  healthcheck:
+    test: [CMD-SHELL, 'pg_isready -U postgres -d harbordesk']
+    interval: 5s
+    timeout: 3s
+    retries: 20
+
+services:
+  vulnerable-db:
+    <<: *database
+    environment:
+      POSTGRES_DB: harbordesk
+      POSTGRES_PASSWORD: ${VULN_DB_OWNER_PASSWORD:?Run python -m scripts.lab init}
+      APP_PASSWORD: ${VULN_DB_PASSWORD:?Run python -m scripts.lab init}
+    volumes:
+      - vulnerable-data:/var/lib/postgresql
+      - ./infrastructure/database/init.sh:/docker-entrypoint-initdb.d/01-app.sh:ro
+    networks: [vulnerable-net]
+
+  hardened-db:
+    <<: *database
+    environment:
+      POSTGRES_DB: harbordesk
+      POSTGRES_PASSWORD: ${HARD_DB_OWNER_PASSWORD:?Run python -m scripts.lab init}
+      APP_PASSWORD: ${HARD_DB_PASSWORD:?Run python -m scripts.lab init}
+    volumes:
+      - hardened-data:/var/lib/postgresql
+      - ./infrastructure/database/init.sh:/docker-entrypoint-initdb.d/01-app.sh:ro
+    networks: [hardened-net]
+
+  vulnerable-init:
+    <<: *runtime
+    build: {context: ., dockerfile: infrastructure/docker/HarborDesk.Dockerfile, target: vulnerable}
+    image: aegis-vulnerable:local
+    restart: "no"
+    command: [python, -m, scripts.initialize]
+    environment:
+      AEGIS_DATABASE_URL: postgresql+psycopg://postgres:${VULN_DB_OWNER_PASSWORD}@vulnerable-db/harbordesk
+    depends_on: {vulnerable-db: {condition: service_healthy}}
+    networks: [vulnerable-net]
+
+  hardened-init:
+    <<: *runtime
+    build: {context: ., dockerfile: infrastructure/docker/HarborDesk.Dockerfile, target: hardened}
+    image: aegis-hardened:local
+    restart: "no"
+    command: [python, -m, scripts.initialize]
+    environment:
+      AEGIS_DATABASE_URL: postgresql+psycopg://postgres:${HARD_DB_OWNER_PASSWORD}@hardened-db/harbordesk
+    depends_on: {hardened-db: {condition: service_healthy}}
+    networks: [hardened-net]
+
+  vulnerable:
+    <<: *runtime
+    build: {context: ., dockerfile: infrastructure/docker/HarborDesk.Dockerfile, target: vulnerable}
+    image: aegis-vulnerable:local
+    environment:
+      AEGIS_DATABASE_URL: postgresql+psycopg://aegis_app:${VULN_DB_PASSWORD}@vulnerable-db/harbordesk
+      AEGIS_ORIGIN: http://127.0.0.1:18080
+    ports: ["127.0.0.1:18080:8080"]
+    depends_on: {vulnerable-init: {condition: service_completed_successfully}, simulator: {condition: service_healthy}}
+    networks: [vulnerable-net]
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=2)"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+
+  hardened:
+    <<: *runtime
+    build: {context: ., dockerfile: infrastructure/docker/HarborDesk.Dockerfile, target: hardened}
+    image: aegis-hardened:local
+    environment:
+      AEGIS_DATABASE_URL: postgresql+psycopg://aegis_app:${HARD_DB_PASSWORD}@hardened-db/harbordesk
+      AEGIS_ORIGIN: http://127.0.0.1:18081
+    ports: ["127.0.0.1:18081:8080"]
+    depends_on: {hardened-init: {condition: service_completed_successfully}, simulator: {condition: service_healthy}}
+    networks: [hardened-net]
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=2)"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+
+  simulator:
+    <<: *runtime
+    build: {context: ., dockerfile: infrastructure/docker/HarborDesk.Dockerfile, target: simulator}
+    image: aegis-simulator:local
+    networks: [vulnerable-net, hardened-net]
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=2)"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+
+  control:
+    <<: *runtime
+    build: {context: ., dockerfile: infrastructure/docker/HarborDesk.Dockerfile, target: control}
+    image: aegis-control:local
+    environment:
+      AEGIS_PROGRESS_PATH: /data/progress.sqlite3
+    ports: ["127.0.0.1:18082:8080"]
+    volumes: ["progress-data:/data"]
+    networks: [control-net, vulnerable-net, hardened-net]
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=2)"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+
+  zap-hardened:
+    image: ghcr.io/zaproxy/zaproxy:2.17.0@sha256:030d3df57735dacbb83464854758e674dd9ad01d79d12a129a8e58b1fd384238
+    profiles: [scan]
+    user: "1000:1000"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 256
+    mem_limit: 1g
+    cpus: 1.0
+    tmpfs: [/tmp:size=256m,mode=1777, /home/zap:size=256m,mode=1777]
+    volumes:
+      - ./infrastructure/zap:/zap/plans:ro
+      - ./artifacts/zap:/zap/wrk:rw
+    command: [zap.sh, -cmd, -autorun, /zap/plans/hardened-passive.yaml]
+    depends_on: {hardened: {condition: service_healthy}}
+    networks: [hardened-net]
+
+networks:
+  vulnerable-net: {internal: true}
+  hardened-net: {internal: true}
+  control-net: {internal: true}
+
+volumes:
+  vulnerable-data:
+  hardened-data:
+  progress-data:

@@ -1,0 +1,65 @@
+[build-system]
+requires = ["setuptools>=80"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aegis-security-lab"
+version = "0.1.0"
+description = "Isolated, comparable web application security laboratories"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+  "fastapi==0.162.0", "uvicorn==0.54.0", "SQLAlchemy==2.1.6",
+  "psycopg[binary]==3.3.6", "alembic==1.20.1", "pydantic-settings==2.16.2",
+  "jinja2==3.1.6", "argon2-cffi==25.1.0", "python-multipart==0.0.33",
+  "httpx==0.28.1", "PyYAML==6.0.3",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest==9.2.0", "pytest-cov==7.1.0", "pytest-timeout==2.4.0",
+  "playwright==1.64.1", "ruff==0.17.3", "mypy==2.4.1",
+  "types-PyYAML==6.0.12.20261030", "bandit==1.9.4", "pip-audit==2.10.1",
+]
+
+[tool.setuptools.packages.find]
+include = ["apps*"]
+
+[tool.setuptools.package-data]
+"apps.core" = ["templates/*.html", "static/*"]
+"apps.lab_control" = ["templates/*.html"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests/unit", "tests/integration", "tests/isolation"]
+addopts = "-ra --strict-markers --basetemp=.runtime/pytest"
+timeout = 40
+markers = [
+  "training: explicit intentionally vulnerable demonstrations",
+  "browser: requires Chromium and repository-local HTTP servers",
+  "postgres: requires an explicit local PostgreSQL test database",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "S"]
+ignore = ["S101", "B008", "E501"]  # Formatter handles code; long report/SQL strings stay intact.
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S105", "S106", "S311", "E501"]
+"apps/vulnerable/**" = ["S608"]
+"apps/core/seed.py" = ["S106"]
+"scripts/**" = ["S603", "S607"]
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+files = ["apps", "scripts"]
+
+[tool.coverage.run]
+source = ["apps"]
+omit = ["apps/*/main.py"]
+
+[tool.bandit]
+exclude_dirs = ["tests", ".venv", "apps/vulnerable"]
