@@ -19,7 +19,7 @@ def check_local_docker() -> None:
 
 def check_config() -> None:
     errors = validate(yaml.safe_load((ROOT / "compose.yml").read_text()))
-    errors += validate(json.loads(compose(["config", "--format", "json"])))
+    errors += validate(json.loads(compose(["--profile", "scan", "config", "--format", "json"])))
     if errors:
         raise SystemExit("Isolation rejected: " + "; ".join(errors))
 

@@ -162,7 +162,7 @@ def compose(arguments: list[str]) -> str:
 
 def effective_runtime(required_services: set[str] | None = None) -> list[str]:
     errors = []
-    ids = compose(["ps", "-aq"]).split()
+    ids = compose(["--profile", "scan", "ps", "-aq"]).split()
     if not ids:
         return ["No Aegis containers to inspect"]
     objects = json.loads(docker(["inspect", *ids]))
@@ -221,7 +221,7 @@ def main() -> None:
     parser.add_argument("--scope", choices=["full", "hardened"], default="full")
     args = parser.parse_args()
     config = (
-        json.loads(compose(["config", "--format", "json"]))
+        json.loads(compose(["--profile", "scan", "config", "--format", "json"]))
         if args.resolved
         else yaml.safe_load((ROOT / "compose.yml").read_text())
     )
