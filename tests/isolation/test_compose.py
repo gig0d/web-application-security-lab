@@ -52,6 +52,18 @@ def test_unquoted_tmpfs_options_are_rejected():
     assert validate(data)
 
 
+def test_relay_cannot_publish_non_loopback_or_forward_packets():
+    data = copy.deepcopy(config())
+    data["services"]["ingress"]["ports"][0] = "0.0.0.0:18080:8080"
+    assert validate(data)
+    data = copy.deepcopy(config())
+    data["services"]["ingress"]["sysctls"]["net.ipv4.ip_forward"] = "1"
+    assert validate(data)
+    data = copy.deepcopy(config())
+    data["services"]["vulnerable"]["networks"].append("ingress-net")
+    assert validate(data)
+
+
 def test_database_ports_and_extra_services_rejected():
     data = copy.deepcopy(config())
     data["services"]["vulnerable-db"]["ports"] = ["127.0.0.1:5432:5432"]

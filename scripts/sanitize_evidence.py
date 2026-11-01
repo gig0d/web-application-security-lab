@@ -2,7 +2,9 @@
 
 import hashlib
 import json
+import os
 import re
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -47,7 +49,17 @@ def sanitize_reports(directory: Path, stem: str) -> None:
             if suffix == "json"
             else redact_text(text)
         )
-        path.write_text(cleaned, encoding="utf-8")
+        # Scanner UID may differ from host UID. Replace through the writable report
+        # directory instead of opening a scanner-owned file for truncation.
+        with tempfile.NamedTemporaryFile(
+            mode="w", encoding="utf-8", dir=directory, delete=False
+        ) as temporary:
+            temporary.write(cleaned)
+            temporary_path = Path(temporary.name)
+        try:
+            os.replace(temporary_path, path)
+        finally:
+            temporary_path.unlink(missing_ok=True)
         changes.append(
             {
                 "file": path.name,

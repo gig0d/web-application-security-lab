@@ -79,7 +79,6 @@ services:
     environment:
       AEGIS_DATABASE_URL: postgresql+psycopg://aegis_app:${VULN_DB_PASSWORD}@vulnerable-db/harbordesk
       AEGIS_ORIGIN: http://127.0.0.1:18080
-    ports: ["127.0.0.1:18080:8080"]
     depends_on: {vulnerable-init: {condition: service_completed_successfully}, simulator: {condition: service_healthy}}
     networks: [vulnerable-net]
     healthcheck:
@@ -95,7 +94,6 @@ services:
     environment:
       AEGIS_DATABASE_URL: postgresql+psycopg://aegis_app:${HARD_DB_PASSWORD}@hardened-db/harbordesk
       AEGIS_ORIGIN: http://127.0.0.1:18081
-    ports: ["127.0.0.1:18081:8080"]
     depends_on: {hardened-init: {condition: service_completed_successfully}, simulator: {condition: service_healthy}}
     networks: [hardened-net]
     healthcheck:
@@ -121,13 +119,29 @@ services:
     image: aegis-control:local
     environment:
       AEGIS_PROGRESS_PATH: /data/progress.sqlite3
-    ports: ["127.0.0.1:18082:8080"]
     volumes: ["progress-data:/data"]
     networks: [control-net, vulnerable-net, hardened-net]
     healthcheck:
       test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=2)"]
       interval: 10s
       timeout: 3s
+      retries: 12
+
+  ingress:
+    <<: *runtime
+    build: {context: ., dockerfile: infrastructure/docker/HarborDesk.Dockerfile, target: ingress}
+    image: aegis-ingress:local
+    ports: ["127.0.0.1:18080:8080", "127.0.0.1:18081:8081", "127.0.0.1:18082:8082"]
+    networks: [ingress-net, vulnerable-net, hardened-net, control-net]
+    sysctls: {net.ipv4.ip_forward: "0"}
+    depends_on:
+      vulnerable: {condition: service_healthy}
+      hardened: {condition: service_healthy}
+      control: {condition: service_healthy}
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; [urllib.request.urlopen('http://127.0.0.1:'+str(p)+'/health', timeout=2) for p in (8080,8081,8082)]"]
+      interval: 10s
+      timeout: 8s
       retries: 12
 
   zap-hardened:
@@ -152,6 +166,7 @@ networks:
   vulnerable-net: {internal: true}
   hardened-net: {internal: true}
   control-net: {internal: true}
+  ingress-net: {internal: false}
 
 volumes:
   vulnerable-data:

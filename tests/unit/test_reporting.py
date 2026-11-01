@@ -1,4 +1,6 @@
+import hashlib
 import json
+from pathlib import Path
 
 import pytest
 
@@ -36,6 +38,23 @@ def test_no_evidence_never_becomes_verified():
         "residual_risk",
         "references",
     } <= data["findings"][0].keys()
+
+
+def test_retained_evidence_provenance_matches_exact_bytes():
+    root = Path(__file__).resolve().parents[2] / "reports/examples"
+    report = json.loads((root / "assessment.json").read_text(encoding="utf-8"))
+    assert (
+        hashlib.sha256((root / "local-test-evidence.json").read_bytes()).hexdigest()
+        == report["provenance"][0]["sha256"]
+    )
+    redaction = json.loads(
+        (root / "zap/hardened-passive.redaction.json").read_text(encoding="utf-8")
+    )
+    for item in redaction["files"]:
+        assert (
+            hashlib.sha256((root / "zap" / item["file"]).read_bytes()).hexdigest()
+            == item["redacted_sha256"]
+        )
 
 
 def test_failed_execution_is_not_promoted_to_report(tmp_path):

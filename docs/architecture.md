@@ -5,6 +5,7 @@ Aegis consists of a learning control center, two HarborDesk implementations, two
 ```mermaid
 flowchart LR
     Student[Local student browser]
+    Ingress[Fixed local TCP ingress relay]
     Control[Aegis control center :18082]
     V[Vulnerable HarborDesk :18080]
     H[Hardened HarborDesk :18081]
@@ -13,9 +14,10 @@ flowchart LR
     Progress[(Separate progress SQLite volume)]
     Sim[Synthetic preview simulator]
     ZAP[On-demand ZAP scanner]
-    Student -->|loopback| Control
-    Student -->|loopback| V
-    Student -->|loopback| H
+    Student -->|three loopback-only ports| Ingress
+    Ingress -->|fixed destination| Control
+    Ingress -->|fixed destination| V
+    Ingress -->|fixed destination| H
     Control --> Progress
     Control -->|fixed requests only| V
     Control -->|fixed requests only| H
@@ -38,6 +40,7 @@ flowchart LR
 | `apps/hardened/main.py` | Instantiates the secure policy without importing the training package |
 | `apps/lab_control/` | Catalog, notebook, bounded HTTP evaluation and evidence/report export |
 | `apps/simulator/` | Two fixed harmless internal document fixtures |
+| `apps/ingress/` | Three fixed TCP listeners; no URL-selected destination or packet routing |
 | `scripts/` | Host-only initialization, allowlisted lifecycle, isolation, locks, reports and plan validation |
 
 The shared factory accepts a policy object from a distinct source entry point. No environment setting selects training behavior. Docker build targets copy the vulnerable package only into the vulnerable image; the hardened build excludes it. Keeping the policy difference small makes root causes reviewable without duplicating the business application.

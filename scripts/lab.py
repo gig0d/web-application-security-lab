@@ -3,6 +3,8 @@
 import argparse
 import json
 import secrets
+import shutil
+from datetime import UTC, datetime
 
 import yaml
 
@@ -97,6 +99,19 @@ def main() -> None:
             raise SystemExit("Scan plan rejected: " + "; ".join(plan_errors))
         expected_report = ROOT / "artifacts/zap" / plan.replace(".yaml", ".json")
         previous_mtime = expected_report.stat().st_mtime_ns if expected_report.exists() else 0
+        previous_files = [
+            path
+            for path in (ROOT / "artifacts/zap").glob(plan.replace(".yaml", ".*"))
+            if path.is_file()
+        ]
+        if previous_files:
+            archive = (
+                ROOT / "artifacts/zap/history" / datetime.now(UTC).strftime("%Y%m%dT%H%M%S%fZ")
+            )
+            archive.mkdir(parents=True, exist_ok=False)
+            for path in previous_files:
+                shutil.copyfile(path, archive / path.name)
+                path.unlink()
         try:
             compose(
                 [

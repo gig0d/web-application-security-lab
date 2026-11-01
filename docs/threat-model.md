@@ -28,6 +28,7 @@ flowchart TB
                 Z[On-demand bounded scanner] --> H
             end
             Controller[Control center: fixed HTTP intermediary]
+            Ingress[Fixed TCP ingress: forwarding disabled]
             Simulator[Preview simulator: fixed responses]
             Notes[(Independent progress store)]
             Controller --> V
@@ -36,16 +37,17 @@ flowchart TB
             V --> Simulator
             H --> Simulator
         end
-        Browser -->|loopback HTTP; untrusted fields| V
-        Browser -->|loopback HTTP; untrusted fields| H
-        Browser -->|loopback HTTP; CSRF-protected changes| Controller
+        Browser -->|three loopback HTTP ports| Ingress
+        Ingress -->|constant destination| V
+        Ingress -->|constant destination| H
+        Ingress -->|constant destination| Controller
         CLI -->|exact Aegis resources| Docker
     end
     External[Internet / real metadata / unrelated host files]
-    Docker -. no authorized runtime route .-> External
+    V -. no egress-capable network .-> External
 ```
 
-The dotted edge represents a forbidden flow, not permitted connectivity. Network inspection must confirm that Docker has not introduced a route. Database credentials and owner operations are separate trust boundaries inside each network. No application container has the Docker socket or host directory access.
+The dotted edge represents a forbidden flow, not permitted connectivity. Network inspection must confirm that the vulnerable application has no egress-capable network. Only the fixed ingress relay joins a separate ingress bridge for host publication; its kernel forwarding is disabled and each listener has one constant application destination. Its compromise is a residual intermediary risk. Database credentials and owner operations are separate trust boundaries inside each network. No application container has the Docker socket or host directory access.
 
 Sensitive entry points are login, all ticket mutations, private-note creation, document download/upload, assignment, role change, session logout, preview selection, synthetic reset and control-center evaluation. Data crosses browser-to-API, API-to-database, server-to-simulator, and control-to-application boundaries. Authorization must be checked at the destination business operation even when the UI hides a form.
 

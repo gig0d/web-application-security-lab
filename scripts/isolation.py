@@ -20,6 +20,7 @@ SERVICES = {
     "simulator",
     "control",
     "zap-hardened",
+    "ingress",
 }
 NETWORKS = {
     "vulnerable-db": {"vulnerable-net"},
@@ -31,8 +32,9 @@ NETWORKS = {
     "simulator": {"vulnerable-net", "hardened-net"},
     "control": {"control-net", "vulnerable-net", "hardened-net"},
     "zap-hardened": {"hardened-net"},
+    "ingress": {"ingress-net", "vulnerable-net", "hardened-net", "control-net"},
 }
-PORTS = {"vulnerable": 18080, "hardened": 18081, "control": 18082}
+PORTS = {"ingress": {8080: 18080, 8081: 18081, 8082: 18082}}
 
 
 def validate(config: dict[str, Any]) -> list[str]:
@@ -41,10 +43,10 @@ def validate(config: dict[str, Any]) -> list[str]:
     if set(services) != SERVICES:
         errors.append("The exact approved service inventory is required")
     networks = config.get("networks", {})
-    if set(networks) != {"vulnerable-net", "hardened-net", "control-net"}:
+    if set(networks) != {"vulnerable-net", "hardened-net", "control-net", "ingress-net"}:
         errors.append("Unexpected network inventory")
     for name, network in networks.items():
-        if not network.get("internal") or network.get("external"):
+        if network.get("internal", False) != (name != "ingress-net") or network.get("external"):
             errors.append(f"{name}: network must be internal and project-owned")
         if network.get("name", f"aegis_{name}") != f"aegis_{name}":
             errors.append(f"{name}: network name must belong to Aegis")
@@ -80,6 +82,8 @@ def validate(config: dict[str, Any]) -> list[str]:
             errors.append(f"{name}: no-new-privileges required")
         if not name.endswith("-db") and not service.get("read_only"):
             errors.append(f"{name}: read-only root filesystem required")
+        if name == "ingress" and str(service.get("sysctls", {}).get("net.ipv4.ip_forward")) != "0":
+            errors.append("Ingress kernel packet forwarding must be disabled")
         for temporary in service.get("tmpfs", []):
             if not isinstance(temporary, str) or temporary.split(":", 1)[0] not in {
                 "/tmp",  # noqa: S108  # nosec B108
@@ -91,16 +95,19 @@ def validate(config: dict[str, Any]) -> list[str]:
         if set(service.get("networks", [])) != NETWORKS.get(name, set()):
             errors.append(f"{name}: network membership rejected")
         ports = service.get("ports", [])
-        if len(ports) != (1 if name in PORTS else 0):
+        allowed_ports = PORTS.get(name, {})
+        if len(ports) != len(allowed_ports):
             errors.append(f"{name}: unexpected published ports")
         for port in ports:
             if isinstance(port, str):
-                good = port == f"127.0.0.1:{PORTS.get(name)}:8080"
+                good = port in {
+                    f"127.0.0.1:{host}:{target}" for target, host in allowed_ports.items()
+                }
             else:
                 good = (
                     port.get("host_ip") == "127.0.0.1"
-                    and str(port.get("published")) == str(PORTS.get(name))
-                    and port.get("target") == 8080
+                    and str(port.get("published")) == str(allowed_ports.get(port.get("target")))
+                    and port.get("target") in allowed_ports
                     and port.get("protocol", "tcp") == "tcp"
                 )
             if not good:
@@ -182,6 +189,8 @@ def effective_runtime(required_services: set[str] | None = None) -> list[str]:
         if container["State"]["Running"]:
             running.add(name)
         host = container["HostConfig"]
+        if name == "ingress" and str((host.get("Sysctls") or {}).get("net.ipv4.ip_forward")) != "0":
+            errors.append("Ingress runtime packet forwarding is not disabled")
         if host.get("Privileged") or host.get("NetworkMode") == "host":
             errors.append(f"{name}: unsafe runtime privilege/network")
         if container["Config"].get("User") not in {"10001:10001", "999:999", "1000:1000"}:
@@ -189,12 +198,14 @@ def effective_runtime(required_services: set[str] | None = None) -> list[str]:
         if "ALL" not in host.get("CapDrop", []) or host.get("CapAdd"):
             errors.append(f"{name}: unsafe runtime capabilities")
         bindings = host.get("PortBindings") or {}
-        expected_ports = {"8080/tcp"} if name in PORTS else set()
+        expected_ports = {f"{port}/tcp" for port in PORTS.get(name, {})}
         if set(bindings) != expected_ports:
             errors.append(f"{name}: unexpected effective port inventory")
-        for entries in bindings.values():
+        for container_port, entries in bindings.items():
             for entry in entries or []:
-                if entry["HostIp"] != "127.0.0.1" or entry["HostPort"] != str(PORTS.get(name)):
+                if entry["HostIp"] != "127.0.0.1" or entry["HostPort"] != str(
+                    PORTS.get(name, {}).get(int(container_port.split("/")[0]))
+                ):
                     errors.append(f"{name}: unsafe effective host binding")
         actual = set(container["NetworkSettings"]["Networks"])
         network_names.update(actual)
@@ -210,12 +221,13 @@ def effective_runtime(required_services: set[str] | None = None) -> list[str]:
             "simulator",
             "vulnerable-db",
             "hardened-db",
+            "ingress",
         }
     )
     if not required <= running:
         errors.append("Required Aegis services are not running")
     for network in json.loads(docker(["network", "inspect", *sorted(network_names)])):
-        if not network["Internal"]:
+        if network["Internal"] != (network["Name"] != "aegis_ingress-net"):
             errors.append("Effective network allows external egress")
     return errors
 
