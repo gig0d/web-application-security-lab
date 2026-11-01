@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import os
 import secrets
 import shutil
 from datetime import UTC, datetime
@@ -14,9 +15,15 @@ from scripts.zap_scope import validate_plan
 
 
 def check_local_docker() -> None:
+    def local_endpoint(value: str) -> bool:
+        return value.startswith(("unix:///", "npipe:////./pipe/"))
+
+    override = os.environ.get("DOCKER_HOST")
+    if override and not local_endpoint(override):
+        raise SystemExit("A remote DOCKER_HOST override is outside the authorized local scope")
     contexts = json.loads(docker(["context", "inspect"]))
     endpoint = contexts[0]["Endpoints"]["docker"]["Host"]
-    if not endpoint.startswith(("npipe://", "unix://")):
+    if not local_endpoint(endpoint):
         raise SystemExit("Only a local Docker Desktop/Engine context is authorized")
     version = docker(["version", "--format", "{{.Server.Version}}"]).strip()
     if not version.split(".", 1)[0].isdigit() or int(version.split(".", 1)[0]) < 28:

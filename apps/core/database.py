@@ -9,14 +9,14 @@ from sqlalchemy.orm import Session, sessionmaker
 def make_engine(url: str) -> Engine:
     if url.startswith("sqlite"):
         Path(".runtime").mkdir(exist_ok=True)
-        engine = create_engine(url, connect_args={"check_same_thread": False})
+        engine = create_engine(url, connect_args={"check_same_thread": False}, hide_parameters=True)
 
         @event.listens_for(engine, "connect")
         def sqlite_foreign_keys(connection: object, _: object) -> None:
             connection.execute("PRAGMA foreign_keys=ON")  # type: ignore[attr-defined]
 
         return engine
-    return create_engine(url, pool_pre_ping=True, pool_size=5, max_overflow=5)
+    return create_engine(url, pool_pre_ping=True, pool_size=5, max_overflow=5, hide_parameters=True)
 
 
 def get_db(request: Request) -> Iterator[Session]:

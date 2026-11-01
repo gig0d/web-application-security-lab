@@ -22,7 +22,7 @@ Source validation rejects unsafe ports, privileged/root execution, missing limit
 
 Unit tests mutate the approved manifest into unsafe examples and assert rejection. These tests establish validator behavior; they are not evidence of a running Docker network. A hardened-only CI startup uses `python -m scripts.isolation --resolved --runtime --scope hardened` and still checks every existing project container rather than ignoring other services.
 
-The lifecycle CLI rejects nonlocal Docker contexts (`tcp://`, SSH or other remote endpoints), accepts no custom project/file/target paths and never calls a shell. Do not bypass it using Compose overrides, externally managed networks or a forwarded daemon. Bind mounts are limited to the database initializer, scanner plans and scanner report directory. Named volumes must retain their exact Aegis names and ownership.
+The lifecycle CLI rejects nonlocal Docker contexts (`tcp://`, SSH or other remote endpoints) and nonlocal `DOCKER_HOST` overrides, accepts no custom project/file/target paths and never calls a shell. Validation permits only bridge networks with the exact approved driver options, a NAT ingress bridge and local named volumes; routed ingress, alternate drivers and resolved host mounts outside the repository are rejected. Do not bypass it using Compose overrides, externally managed networks or a forwarded daemon. Bind mounts are limited to the database initializer, scanner plans and scanner report directory. Named volumes must retain their exact Aegis names and ownership.
 
 ## Verification limits
 

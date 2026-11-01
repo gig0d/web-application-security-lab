@@ -48,6 +48,15 @@ def validate(config: dict[str, Any]) -> list[str]:
     if set(networks) != {"vulnerable-net", "hardened-net", "control-net", "ingress-net"}:
         errors.append("Unexpected network inventory")
     for name, network in networks.items():
+        if network.get("driver") not in {None, "bridge"}:
+            errors.append(f"{name}: only the bridge driver is approved")
+        approved_options = (
+            {}
+            if name == "ingress-net"
+            else {"com.docker.network.bridge.gateway_mode_ipv4": "isolated"}
+        )
+        if (network.get("driver_opts") or {}) != approved_options:
+            errors.append(f"{name}: unapproved network driver options")
         if network.get("internal", False) != (name != "ingress-net") or network.get("external"):
             errors.append(f"{name}: network must be internal and project-owned")
         if network.get("name", f"aegis_{name}") != f"aegis_{name}":
@@ -65,6 +74,8 @@ def validate(config: dict[str, Any]) -> list[str]:
         errors.append("Unexpected data volume inventory")
     for name, definition in volumes.items():
         definition = definition or {}
+        if definition.get("driver") not in {None, "local"}:
+            errors.append(f"{name}: only local project-owned volumes are approved")
         if (
             definition.get("external")
             or definition.get("driver_opts")
@@ -143,6 +154,8 @@ def validate(config: dict[str, Any]) -> list[str]:
                     "/zap/wrk": ("artifacts/zap", False),
                 }.get(target)
                 resolved = (ROOT / source).resolve()
+                if not resolved.is_relative_to(ROOT.resolve()):
+                    errors.append(f"{name}: host mounts must resolve inside the repository")
                 if (
                     not expected
                     or resolved != (ROOT / expected[0]).resolve()
@@ -248,6 +261,14 @@ def effective_runtime(required_services: set[str] | None = None) -> list[str]:
     if not required <= running:
         errors.append("Required Aegis services are not running")
     for network in json.loads(docker(["network", "inspect", *sorted(network_names)])):
+        if network.get("Driver") != "bridge":
+            errors.append("Unexpected effective network driver")
+        if (
+            network["Name"] == "aegis_ingress-net"
+            and network.get("Options", {}).get("com.docker.network.bridge.gateway_mode_ipv4", "nat")
+            != "nat"
+        ):
+            errors.append("Ingress must use NAT; routed mode would bypass host port bindings")
         if network["Internal"] != (network["Name"] != "aegis_ingress-net"):
             errors.append("Effective network allows external egress")
         if (

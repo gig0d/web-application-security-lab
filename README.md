@@ -10,7 +10,7 @@ Owner: **Giovanny Alvarado Barrantes** · GitHub: [gig0d](https://github.com/gig
 
 ## Verification status
 
-The source implements all twelve scenarios and the business workflows below. Local Python/API verification is passing. **Full project acceptance is still pending Docker, PostgreSQL, ZAP and fresh-clone execution.** Do not interpret supplied infrastructure or CI files as successful runs. See [verification evidence and remaining checks](docs/verification.md) and [limitations](docs/limitations.md).
+All twelve scenarios and the business workflows below are implemented. Clean Linux runners have passed PostgreSQL, Docker isolation, browser comparisons, authenticated passive and bounded active ZAP scans, persistence and repeated reset checks. Retained reports identify their exact execution and source revision. Windows Docker Desktop startup remains unverified because Docker is not installed on the development workstation. See [verification evidence](docs/verification.md) and [limitations](docs/limitations.md).
 
 ## Start locally
 

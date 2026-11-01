@@ -59,7 +59,7 @@ files = ["apps", "scripts"]
 
 [tool.coverage.run]
 source = ["apps"]
-omit = ["apps/*/main.py"]
+omit = ["apps/hardened/main.py", "apps/vulnerable/main.py"]
 
 [tool.bandit]
 exclude_dirs = ["tests", ".venv", "apps/vulnerable"]

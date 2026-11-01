@@ -60,6 +60,14 @@ def test_relay_cannot_publish_non_loopback_or_forward_packets():
     data["services"]["ingress"]["ports"][0] = "0.0.0.0:18080:8080"
     assert validate(data)
     data = copy.deepcopy(config())
+    data["networks"]["ingress-net"]["driver_opts"] = {
+        "com.docker.network.bridge.gateway_mode_ipv4": "routed"
+    }
+    assert validate(data)
+    data = copy.deepcopy(config())
+    data["networks"]["ingress-net"]["driver"] = "macvlan"
+    assert validate(data)
+    data = copy.deepcopy(config())
     data["services"]["ingress"]["sysctls"]["net.ipv4.ip_forward"] = "1"
     assert validate(data)
     data = copy.deepcopy(config())

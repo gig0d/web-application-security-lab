@@ -1,40 +1,37 @@
 # Verification record
 
-Local verification on 2026-11-01 (America/Costa_Rica), Windows PowerShell, Python 3.13.18:
+Verification performed on 2026-11-01. Local development used Windows PowerShell and Python 3.13.18; clean hosted acceptance used Ubuntu 24.04 runners.
 
 | Check | Actual result |
 | --- | --- |
-| Expected origin | Empty authorized remote cloned successfully |
+| Expected origin | Exact authorized repository; remote hashes verified after pushes |
 | Effective author AND committer | Giovanny Alvarado Barrantes <gioab0411@gmail.com> |
 | Dependency installation / pip check | Installed; no broken requirements |
 | PyPI hash locks | 33 runtime / 77 development distributions |
-| Combined unit/integration/isolation/training/browser run | 105 passed; 1 PostgreSQL test skipped locally |
-| Application line coverage for that combined run | 97% (includes training and control center) |
+| Combined local unit/integration/isolation/training/browser run | 119 passed; 1 PostgreSQL test skipped locally |
+| Application line coverage for that run | 95% (931/980 statements), including controller, ingress and simulator; only the two thin variant entry points omitted |
 | Runtime dependency audit | No known vulnerabilities reported |
 | Browser execution | 9 passed in Chromium 156; stored/reflected XSS, CSRF, object access, notebook/mobile layout |
 | Ruff format / lint | Passed |
-| MyPy | Passed, strict mode, 33 source modules |
-| Bandit | Passed on core, hardened, control, simulator and host scripts; vulnerable code excluded intentionally |
+| MyPy | Passed, strict mode, 37 source modules |
+| Bandit | Passed on core, hardened, control, simulator, ingress and host scripts; vulnerable code excluded intentionally |
 | Local Docker runtime | Unavailable on the Windows workstation |
-| Hosted hardened security workflow | Both jobs passed on owner commit 0d83e76; real PostgreSQL, migrations, static/audit gates, Docker build/isolation and authenticated passive ZAP |
-| Hosted full isolated training workflow | Passed on owner commit 0d83e76; full stack, twenty HTTP comparisons, restricted PostgreSQL role/read-only query, independent databases/restart, nine real Docker browser checks, bounded active scan and reset |
-| Latest acceptance refinements | Supported-engine gate, simultaneous-user regression, repeated reset and non-empty progress probe are locally checked or prepared; final committed-source CI execution pending |
+| Hosted hardened security workflow | Both jobs passed on owner commit `b06b792`; real PostgreSQL, migrations, static/audit gates, Docker build/isolation and authenticated passive ZAP |
+| Hosted full isolated training workflow | Passed on owner commit `b06b792`; full stack, twenty HTTP comparisons, restricted PostgreSQL role/read-only transaction, independent databases/restart, nine Docker browser checks, bounded active scans and two volume resets |
+| Final source refinements | SQL exception parameter redaction, bridge/NAT and local-daemon guards, browser fixture teardown and evidence provenance regressions pass locally; the final commit is separately checked by standard CI |
 
-The first test attempt could not write pytest's default temporary directory under the managed sandbox. Tests now use `.runtime/pytest`. A subsequent run exposed a cookie-domain conflict in a replay test and unclosed notebook connections; both were fixed before the passing result above.
+The earlier 105-pass run reported 97% coverage with broad `main.py` exclusions. The final 95% measurement includes the controller, relay and simulator implementations and supersedes that narrower metric. The final combined run also verifies that a remote `DOCKER_HOST` override is rejected before any Docker command is issued.
 
-Raw machine-readable test evidence, JUnit, coverage, Bandit and dependency audit outputs are written beneath ignored `artifacts/`. Sanitized selected executions may be retained in `reports/examples/`; these describe their original execution only. No ZAP output is invented.
+Completely passing hosted runs on `b06b792`: [hardened security gates](https://github.com/gig0d/web-application-security-lab/actions/runs/41293692505) and [full isolated training acceptance](https://github.com/gig0d/web-application-security-lab/actions/runs/41293758364). Both start from a clean checkout. The full run additionally verifies direct controller actions through the fixed ingress, non-empty notes/results persistence across restart, effective isolated gateways and a preserved notebook marker after each of two business-volume resets. Active rules target both the seeded HTML search sink and the actual SQL-backed ticket-search API.
 
-The browser checks set harmless local DOM attributes for the XSS proofs, submit a real cross-origin/same-site form for CSRF, and collect screenshots of the actual responses. The first dashboard run found CSS overriding the HTML `hidden` attribute; the corrected filter and mobile viewport checks passed. One upstream Starlette warning deprecates HTTPX 0.x use in TestClient; HTTPX API tests still execute successfully with the selected compatible releases.
+Actual selected artifacts live in `reports/examples/`: raw hosted observations, Docker verification, PostgreSQL browser observations, generated assessment and redacted active/passive ZAP reports. The assessment records SHA-256 provenance for both input files. The active and passive reports each contain four informational observations and no high, medium or low alert. These bounded scans are not a general security certification.
 
-Completely passing hosted runs: [hardened security gates](https://github.com/gig0d/web-application-security-lab/actions/runs/41291200554) and [full isolated training acceptance](https://github.com/gig0d/web-application-security-lab/actions/runs/41291288113), both on `0d83e76`. Retained actual artifacts include `reports/examples/compose-verification.json`, `compose-browser-evidence.json`, and redacted active/passive ZAP reports. The active report has four informational observations and no higher-risk alert; it is not a general security certification.
+Local raw evidence, JUnit, coverage, Bandit and dependency audit outputs are written beneath ignored `artifacts/`. Retained examples describe their original execution only; no result is inferred from merely supplying a workflow. Local worktree evidence does not imply a clean committed revision. The final source commit and its CI status are independently visible in Git history and Actions.
 
-Failures were preserved rather than concealed: disabled-profile inventory, split tmpfs options, inaccessible host publication on internal-only networks, and scanner/host UID report ownership. Fixed ingress, atomic artifact replacement and exact-byte evidence storage address the measured failures. The successful full-stack run verifies the resulting behavior.
+The browser checks set harmless local DOM attributes for XSS proofs, submit a real cross-origin/same-site form for CSRF and capture actual pages. One upstream Starlette warning deprecates HTTPX 0.x use in TestClient; the selected compatible releases still execute the API tests successfully.
 
-## Final acceptance still required
+Failures were corrected and retained in the engineering record: disabled-profile inventory, split tmpfs options, inaccessible host publication on internal-only networks, scanner/host UID ownership, exact active-start URL seeding and controller connectivity after isolated gateways were enabled. Fixed ingress, atomic artifact replacement, exact-byte evidence storage and fixed controller relay addresses address those measured failures. Earlier local sandbox temporary-directory, cookie-domain, notebook-connection and dashboard `hidden`-attribute issues were also corrected before acceptance.
 
-- Execute final refinements on their committed source: non-empty notebook/controller persistence, direct controller actions, two volume resets, supported-engine gate and active SQL-API search scope.
-- Repeat final secure/training workflows after that source checkpoint and record their exact commit/run IDs.
-- Windows Docker Desktop startup remains unverified locally because Docker is not installed; the complete stack has executed on clean Linux hosted runners.
-- Recheck Git author/committer for every milestone and confirm remote hashes.
+## Acceptance boundary
 
-Until these checks execute successfully, the full definition of done is not satisfied.
+The complete stack has executed successfully on clean Linux hosted runners. Windows Docker Desktop startup remains unverified because Docker is not installed locally; verify effective isolation on the actual Docker Desktop version before use. No public deployment, production readiness or complete ASVS compliance is claimed. See [limitations](limitations.md) and the exact retained [example provenance](../reports/examples/README.md).

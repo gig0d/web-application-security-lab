@@ -25,7 +25,7 @@ def browser():
 
 
 @pytest.fixture
-def servers():
+def servers(app_factory):
     owned = []
 
     def start(app, port):
@@ -64,7 +64,7 @@ def servers():
 
 
 @pytest.fixture(params=["vulnerable", "hardened"])
-def live(request, servers, browser):
+def live(request, app_factory, servers, browser):
     hard = request.param == "hardened"
     if request.config.getoption("--compose"):
         env = SimpleNamespace(
@@ -81,7 +81,7 @@ def live(request, servers, browser):
             assert restored.status_code == 200
         env.transport = "Real Docker Compose, PostgreSQL and loopback HTTP"
     else:
-        env = request.getfixturevalue("app_factory")(request.param)
+        env = app_factory(request.param)
         env.hard = hard
         env.base = servers(env.app, 18081 if env.hard else 18080)
         env.transport = "Test-owned loopback HTTP and disposable SQLite"

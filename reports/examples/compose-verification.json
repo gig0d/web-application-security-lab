@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-01T09:05:01.332049+00:00",
+  "generated_at": "2026-11-01T09:38:12.837353+00:00",
   "transport": "Actual local Docker Compose with independent PostgreSQL and internal simulator",
   "checks": [
     {
@@ -47,6 +47,7 @@
       "passed": true,
       "observation": {
         "assignment_status": 200,
+        "assignee_after": 4,
         "customer_form_hidden": true
       }
     },
@@ -56,6 +57,7 @@
       "passed": true,
       "observation": {
         "assignment_status": 403,
+        "assignee_after": 3,
         "customer_form_hidden": true
       }
     },

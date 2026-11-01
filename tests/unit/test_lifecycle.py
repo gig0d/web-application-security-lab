@@ -30,6 +30,8 @@ def test_resolved_validation_enables_profile_without_starting_it(monkeypatch):
     ],
 )
 def test_local_supported_engine_is_required(monkeypatch, endpoint, version, allowed):
+    monkeypatch.delenv("DOCKER_HOST", raising=False)
+
     def docker(arguments):
         if arguments == ["context", "inspect"]:
             return json.dumps([{"Endpoints": {"docker": {"Host": endpoint}}}])
@@ -42,3 +44,14 @@ def test_local_supported_engine_is_required(monkeypatch, endpoint, version, allo
     else:
         with pytest.raises(SystemExit):
             lab.check_local_docker()
+
+
+def test_remote_host_override_is_rejected_before_any_docker_command(monkeypatch):
+    monkeypatch.setenv("DOCKER_HOST", "tcp://192.0.2.1:2375")
+
+    def forbidden(arguments):
+        pytest.fail("Remote Docker endpoint must never be contacted")
+
+    monkeypatch.setattr(lab, "docker", forbidden)
+    with pytest.raises(SystemExit):
+        lab.check_local_docker()

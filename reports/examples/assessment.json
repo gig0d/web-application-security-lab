@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-01T08:41:11.898122+00:00",
+  "generated_at": "2026-11-01T09:48:49.554446+00:00",
   "scope": "Aegis local isolated HarborDesk only",
   "findings": [
     {
@@ -109,6 +109,34 @@
           },
           "test": "tests/browser/test_browser_labs.py::test_object_authorization_in_browser[hardened]",
           "test_passed": true
+        },
+        {
+          "lab_id": "lab01",
+          "variant": "vulnerable",
+          "observations": {
+            "browser": "Chromium",
+            "foreign_ui_status": 200,
+            "own_ui_visible": true,
+            "screenshot": "artifacts/compose/browser/lab01-vulnerable.png",
+            "transport": "Actual local Docker Compose over loopback HTTP",
+            "database": "PostgreSQL"
+          },
+          "test": "tests/browser/test_browser_labs.py::test_object_authorization_in_browser[vulnerable]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab01",
+          "variant": "hardened",
+          "observations": {
+            "browser": "Chromium",
+            "foreign_ui_status": 404,
+            "own_ui_visible": true,
+            "screenshot": "artifacts/compose/browser/lab01-hardened.png",
+            "transport": "Actual local Docker Compose over loopback HTTP",
+            "database": "PostgreSQL"
+          },
+          "test": "tests/browser/test_browser_labs.py::test_object_authorization_in_browser[hardened]",
+          "test_passed": true
         }
       ],
       "evidence": {
@@ -196,6 +224,34 @@
               "foreign_ui_status": 404,
               "own_ui_visible": true,
               "screenshot": "artifacts/browser/lab01-hardened.png"
+            },
+            "test": "tests/browser/test_browser_labs.py::test_object_authorization_in_browser[hardened]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab01",
+            "variant": "vulnerable",
+            "observations": {
+              "browser": "Chromium",
+              "foreign_ui_status": 200,
+              "own_ui_visible": true,
+              "screenshot": "artifacts/compose/browser/lab01-vulnerable.png",
+              "transport": "Actual local Docker Compose over loopback HTTP",
+              "database": "PostgreSQL"
+            },
+            "test": "tests/browser/test_browser_labs.py::test_object_authorization_in_browser[vulnerable]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab01",
+            "variant": "hardened",
+            "observations": {
+              "browser": "Chromium",
+              "foreign_ui_status": 404,
+              "own_ui_visible": true,
+              "screenshot": "artifacts/compose/browser/lab01-hardened.png",
+              "transport": "Actual local Docker Compose over loopback HTTP",
+              "database": "PostgreSQL"
             },
             "test": "tests/browser/test_browser_labs.py::test_object_authorization_in_browser[hardened]",
             "test_passed": true
@@ -384,10 +440,10 @@
       "severity_rationale": "Qualitative fictional business impact; no CVSS score is claimed.",
       "reproduction_steps": [
         "Sign in as alice and observe that /tickets/1 has no assignment form.",
-        "POST /api/admin/tickets/1/assign with assignee_id 3 and Alice's CSRF token.",
+        "POST /api/admin/tickets/1/assign with assignee_id 4 and Alice's CSRF token.",
         "Repeat as admin to verify the legitimate administrative workflow."
       ],
-      "expected_behavior": "Training accepts Alice's direct request despite the hidden form; hardened returns 403. A real admin can assign in both.",
+      "expected_behavior": "Training changes ticket 1 from support employee 3 to administrator 4 despite Alice's hidden form; hardened returns 403 and keeps assignee 3. A real admin can assign in both.",
       "observed_behavior": [
         {
           "lab_id": "lab03",
@@ -398,6 +454,7 @@
               "passed": true,
               "observation": {
                 "assignment_status": 200,
+                "assignee_after": 4,
                 "customer_form_hidden": true
               }
             },
@@ -415,6 +472,7 @@
               "passed": true,
               "observation": {
                 "assignment_status": 403,
+                "assignee_after": 3,
                 "customer_form_hidden": true
               }
             },
@@ -428,6 +486,7 @@
           "variant": "vulnerable",
           "observations": {
             "customer_assignment": 200,
+            "assignee_after": 4,
             "hidden_form": true,
             "legitimate_admin": 200
           },
@@ -439,6 +498,7 @@
           "variant": "hardened",
           "observations": {
             "customer_assignment": 403,
+            "assignee_after": 3,
             "hidden_form": true,
             "legitimate_admin": 200
           },
@@ -460,6 +520,7 @@
                 "passed": true,
                 "observation": {
                   "assignment_status": 200,
+                  "assignee_after": 4,
                   "customer_form_hidden": true
                 }
               },
@@ -477,6 +538,7 @@
                 "passed": true,
                 "observation": {
                   "assignment_status": 403,
+                  "assignee_after": 3,
                   "customer_form_hidden": true
                 }
               },
@@ -490,6 +552,7 @@
             "variant": "vulnerable",
             "observations": {
               "customer_assignment": 200,
+              "assignee_after": 4,
               "hidden_form": true,
               "legitimate_admin": 200
             },
@@ -501,6 +564,7 @@
             "variant": "hardened",
             "observations": {
               "customer_assignment": 403,
+              "assignee_after": 3,
               "hidden_form": true,
               "legitimate_admin": 200
             },
@@ -759,6 +823,34 @@
           },
           "test": "tests/browser/test_browser_labs.py::test_stored_xss[hardened]",
           "test_passed": true
+        },
+        {
+          "lab_id": "lab05",
+          "variant": "vulnerable",
+          "observations": {
+            "browser": "Chromium",
+            "dom_marker": "stored",
+            "browser_execution_verified": true,
+            "screenshot": "artifacts/compose/browser/lab05-vulnerable.png",
+            "transport": "Actual local Docker Compose over loopback HTTP",
+            "database": "PostgreSQL"
+          },
+          "test": "tests/browser/test_browser_labs.py::test_stored_xss[vulnerable]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab05",
+          "variant": "hardened",
+          "observations": {
+            "browser": "Chromium",
+            "dom_marker": null,
+            "browser_execution_verified": true,
+            "screenshot": "artifacts/compose/browser/lab05-hardened.png",
+            "transport": "Actual local Docker Compose over loopback HTTP",
+            "database": "PostgreSQL"
+          },
+          "test": "tests/browser/test_browser_labs.py::test_stored_xss[hardened]",
+          "test_passed": true
         }
       ],
       "evidence": {
@@ -806,6 +898,34 @@
               "dom_marker": null,
               "browser_execution_verified": true,
               "screenshot": "artifacts/browser/lab05-hardened.png"
+            },
+            "test": "tests/browser/test_browser_labs.py::test_stored_xss[hardened]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab05",
+            "variant": "vulnerable",
+            "observations": {
+              "browser": "Chromium",
+              "dom_marker": "stored",
+              "browser_execution_verified": true,
+              "screenshot": "artifacts/compose/browser/lab05-vulnerable.png",
+              "transport": "Actual local Docker Compose over loopback HTTP",
+              "database": "PostgreSQL"
+            },
+            "test": "tests/browser/test_browser_labs.py::test_stored_xss[vulnerable]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab05",
+            "variant": "hardened",
+            "observations": {
+              "browser": "Chromium",
+              "dom_marker": null,
+              "browser_execution_verified": true,
+              "screenshot": "artifacts/compose/browser/lab05-hardened.png",
+              "transport": "Actual local Docker Compose over loopback HTTP",
+              "database": "PostgreSQL"
             },
             "test": "tests/browser/test_browser_labs.py::test_stored_xss[hardened]",
             "test_passed": true
@@ -892,6 +1012,34 @@
           },
           "test": "tests/browser/test_browser_labs.py::test_reflected_xss[hardened]",
           "test_passed": true
+        },
+        {
+          "lab_id": "lab06",
+          "variant": "vulnerable",
+          "observations": {
+            "browser": "Chromium",
+            "dom_marker": "reflected",
+            "browser_execution_verified": true,
+            "screenshot": "artifacts/compose/browser/lab06-vulnerable.png",
+            "transport": "Actual local Docker Compose over loopback HTTP",
+            "database": "PostgreSQL"
+          },
+          "test": "tests/browser/test_browser_labs.py::test_reflected_xss[vulnerable]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab06",
+          "variant": "hardened",
+          "observations": {
+            "browser": "Chromium",
+            "dom_marker": null,
+            "browser_execution_verified": true,
+            "screenshot": "artifacts/compose/browser/lab06-hardened.png",
+            "transport": "Actual local Docker Compose over loopback HTTP",
+            "database": "PostgreSQL"
+          },
+          "test": "tests/browser/test_browser_labs.py::test_reflected_xss[hardened]",
+          "test_passed": true
         }
       ],
       "evidence": {
@@ -939,6 +1087,34 @@
               "dom_marker": null,
               "browser_execution_verified": true,
               "screenshot": "artifacts/browser/lab06-hardened.png"
+            },
+            "test": "tests/browser/test_browser_labs.py::test_reflected_xss[hardened]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab06",
+            "variant": "vulnerable",
+            "observations": {
+              "browser": "Chromium",
+              "dom_marker": "reflected",
+              "browser_execution_verified": true,
+              "screenshot": "artifacts/compose/browser/lab06-vulnerable.png",
+              "transport": "Actual local Docker Compose over loopback HTTP",
+              "database": "PostgreSQL"
+            },
+            "test": "tests/browser/test_browser_labs.py::test_reflected_xss[vulnerable]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab06",
+            "variant": "hardened",
+            "observations": {
+              "browser": "Chromium",
+              "dom_marker": null,
+              "browser_execution_verified": true,
+              "screenshot": "artifacts/compose/browser/lab06-hardened.png",
+              "transport": "Actual local Docker Compose over loopback HTTP",
+              "database": "PostgreSQL"
             },
             "test": "tests/browser/test_browser_labs.py::test_reflected_xss[hardened]",
             "test_passed": true
@@ -1062,6 +1238,34 @@
           },
           "test": "tests/browser/test_browser_labs.py::test_cross_origin_form[hardened]",
           "test_passed": true
+        },
+        {
+          "lab_id": "lab07",
+          "variant": "vulnerable",
+          "observations": {
+            "browser": "Chromium",
+            "browser_verified": true,
+            "forged_status": 200,
+            "observed_name": "Forged Local Name",
+            "transport": "Actual local Docker Compose over loopback HTTP",
+            "database": "PostgreSQL"
+          },
+          "test": "tests/browser/test_browser_labs.py::test_cross_origin_form[vulnerable]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab07",
+          "variant": "hardened",
+          "observations": {
+            "browser": "Chromium",
+            "browser_verified": true,
+            "forged_status": 403,
+            "observed_name": "Alice Morgan",
+            "transport": "Actual local Docker Compose over loopback HTTP",
+            "database": "PostgreSQL"
+          },
+          "test": "tests/browser/test_browser_labs.py::test_cross_origin_form[hardened]",
+          "test_passed": true
         }
       ],
       "evidence": {
@@ -1145,6 +1349,34 @@
               "browser_verified": true,
               "forged_status": 403,
               "observed_name": "Alice Morgan"
+            },
+            "test": "tests/browser/test_browser_labs.py::test_cross_origin_form[hardened]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab07",
+            "variant": "vulnerable",
+            "observations": {
+              "browser": "Chromium",
+              "browser_verified": true,
+              "forged_status": 200,
+              "observed_name": "Forged Local Name",
+              "transport": "Actual local Docker Compose over loopback HTTP",
+              "database": "PostgreSQL"
+            },
+            "test": "tests/browser/test_browser_labs.py::test_cross_origin_form[vulnerable]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab07",
+            "variant": "hardened",
+            "observations": {
+              "browser": "Chromium",
+              "browser_verified": true,
+              "forged_status": 403,
+              "observed_name": "Alice Morgan",
+              "transport": "Actual local Docker Compose over loopback HTTP",
+              "database": "PostgreSQL"
             },
             "test": "tests/browser/test_browser_labs.py::test_cross_origin_form[hardened]",
             "test_passed": true
@@ -2008,9 +2240,14 @@
   ],
   "provenance": [
     {
-      "path": "artifacts/full/evidence.json",
-      "sha256": "7363f4073c0e64aedc6ac9851b3b6b7296a7935ce2756b242b6175120f514bff",
-      "generated_at": "2026-11-01T08:40:13.044504+00:00"
+      "path": "artifacts/accepted-final/tests/evidence.json",
+      "sha256": "3a19ffab0fc4e614eb125ab8384deac57cd5f8ee22b84c3e91db2eecdb617900",
+      "generated_at": "2026-11-01T09:36:01.600766+00:00"
+    },
+    {
+      "path": "artifacts/accepted-final/compose/browser-evidence.json",
+      "sha256": "012cd557fe1b7655cebf7ebf076b0b2d7c2e129fe428836c7ad4133c8063bf39",
+      "generated_at": "2026-11-01T09:38:23.503546+00:00"
     }
   ]
 }

@@ -1,6 +1,6 @@
 # Aegis — HarborDesk security assessment
 
-Generated: 2026-11-01T08:41:11.898122+00:00
+Generated: 2026-11-01T09:48:49.554446+00:00
 
 ## Executive summary
 
@@ -153,6 +153,34 @@ ASVS: v5.0.0-8.2.2, v5.0.0-8.3.1. WSTG: WSTG-v42-ATHZ-04.
       },
       "test": "tests/browser/test_browser_labs.py::test_object_authorization_in_browser[hardened]",
       "test_passed": true
+    },
+    {
+      "lab_id": "lab01",
+      "variant": "vulnerable",
+      "observations": {
+        "browser": "Chromium",
+        "foreign_ui_status": 200,
+        "own_ui_visible": true,
+        "screenshot": "artifacts/compose/browser/lab01-vulnerable.png",
+        "transport": "Actual local Docker Compose over loopback HTTP",
+        "database": "PostgreSQL"
+      },
+      "test": "tests/browser/test_browser_labs.py::test_object_authorization_in_browser[vulnerable]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab01",
+      "variant": "hardened",
+      "observations": {
+        "browser": "Chromium",
+        "foreign_ui_status": 404,
+        "own_ui_visible": true,
+        "screenshot": "artifacts/compose/browser/lab01-hardened.png",
+        "transport": "Actual local Docker Compose over loopback HTTP",
+        "database": "PostgreSQL"
+      },
+      "test": "tests/browser/test_browser_labs.py::test_object_authorization_in_browser[hardened]",
+      "test_passed": true
     }
   ],
   "limitations": [
@@ -295,11 +323,11 @@ ASVS: v5.0.0-8.2.1, v5.0.0-8.3.1. WSTG: WSTG-v42-ATHZ-03.
 
 1. Sign in as alice and observe that /tickets/1 has no assignment form.
 
-2. POST /api/admin/tickets/1/assign with assignee_id 3 and Alice's CSRF token.
+2. POST /api/admin/tickets/1/assign with assignee_id 4 and Alice's CSRF token.
 
 3. Repeat as admin to verify the legitimate administrative workflow.
 
-**Expected comparison:** Training accepts Alice's direct request despite the hidden form; hardened returns 403. A real admin can assign in both.
+**Expected comparison:** Training changes ticket 1 from support employee 3 to administrator 4 despite Alice's hidden form; hardened returns 403 and keeps assignee 3. A real admin can assign in both.
 
 ### Technical evidence
 
@@ -319,6 +347,7 @@ ASVS: v5.0.0-8.2.1, v5.0.0-8.3.1. WSTG: WSTG-v42-ATHZ-03.
           "passed": true,
           "observation": {
             "assignment_status": 200,
+            "assignee_after": 4,
             "customer_form_hidden": true
           }
         },
@@ -336,6 +365,7 @@ ASVS: v5.0.0-8.2.1, v5.0.0-8.3.1. WSTG: WSTG-v42-ATHZ-03.
           "passed": true,
           "observation": {
             "assignment_status": 403,
+            "assignee_after": 3,
             "customer_form_hidden": true
           }
         },
@@ -349,6 +379,7 @@ ASVS: v5.0.0-8.2.1, v5.0.0-8.3.1. WSTG: WSTG-v42-ATHZ-03.
       "variant": "vulnerable",
       "observations": {
         "customer_assignment": 200,
+        "assignee_after": 4,
         "hidden_form": true,
         "legitimate_admin": 200
       },
@@ -360,6 +391,7 @@ ASVS: v5.0.0-8.2.1, v5.0.0-8.3.1. WSTG: WSTG-v42-ATHZ-03.
       "variant": "hardened",
       "observations": {
         "customer_assignment": 403,
+        "assignee_after": 3,
         "hidden_form": true,
         "legitimate_admin": 200
       },
@@ -577,6 +609,34 @@ ASVS: v5.0.0-1.2.1, v5.0.0-3.4.3. WSTG: WSTG-v42-INPV-02.
       },
       "test": "tests/browser/test_browser_labs.py::test_stored_xss[hardened]",
       "test_passed": true
+    },
+    {
+      "lab_id": "lab05",
+      "variant": "vulnerable",
+      "observations": {
+        "browser": "Chromium",
+        "dom_marker": "stored",
+        "browser_execution_verified": true,
+        "screenshot": "artifacts/compose/browser/lab05-vulnerable.png",
+        "transport": "Actual local Docker Compose over loopback HTTP",
+        "database": "PostgreSQL"
+      },
+      "test": "tests/browser/test_browser_labs.py::test_stored_xss[vulnerable]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab05",
+      "variant": "hardened",
+      "observations": {
+        "browser": "Chromium",
+        "dom_marker": null,
+        "browser_execution_verified": true,
+        "screenshot": "artifacts/compose/browser/lab05-hardened.png",
+        "transport": "Actual local Docker Compose over loopback HTTP",
+        "database": "PostgreSQL"
+      },
+      "test": "tests/browser/test_browser_labs.py::test_stored_xss[hardened]",
+      "test_passed": true
     }
   ],
   "limitations": [
@@ -669,6 +729,34 @@ ASVS: v5.0.0-1.2.1, v5.0.0-1.1.2. WSTG: WSTG-v42-INPV-01.
         "dom_marker": null,
         "browser_execution_verified": true,
         "screenshot": "artifacts/browser/lab06-hardened.png"
+      },
+      "test": "tests/browser/test_browser_labs.py::test_reflected_xss[hardened]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab06",
+      "variant": "vulnerable",
+      "observations": {
+        "browser": "Chromium",
+        "dom_marker": "reflected",
+        "browser_execution_verified": true,
+        "screenshot": "artifacts/compose/browser/lab06-vulnerable.png",
+        "transport": "Actual local Docker Compose over loopback HTTP",
+        "database": "PostgreSQL"
+      },
+      "test": "tests/browser/test_browser_labs.py::test_reflected_xss[vulnerable]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab06",
+      "variant": "hardened",
+      "observations": {
+        "browser": "Chromium",
+        "dom_marker": null,
+        "browser_execution_verified": true,
+        "screenshot": "artifacts/compose/browser/lab06-hardened.png",
+        "transport": "Actual local Docker Compose over loopback HTTP",
+        "database": "PostgreSQL"
       },
       "test": "tests/browser/test_browser_labs.py::test_reflected_xss[hardened]",
       "test_passed": true
@@ -802,6 +890,34 @@ ASVS: v5.0.0-3.5.1, v5.0.0-3.3.2. WSTG: WSTG-v42-SESS-05.
         "browser_verified": true,
         "forged_status": 403,
         "observed_name": "Alice Morgan"
+      },
+      "test": "tests/browser/test_browser_labs.py::test_cross_origin_form[hardened]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab07",
+      "variant": "vulnerable",
+      "observations": {
+        "browser": "Chromium",
+        "browser_verified": true,
+        "forged_status": 200,
+        "observed_name": "Forged Local Name",
+        "transport": "Actual local Docker Compose over loopback HTTP",
+        "database": "PostgreSQL"
+      },
+      "test": "tests/browser/test_browser_labs.py::test_cross_origin_form[vulnerable]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab07",
+      "variant": "hardened",
+      "observations": {
+        "browser": "Chromium",
+        "browser_verified": true,
+        "forged_status": 403,
+        "observed_name": "Alice Morgan",
+        "transport": "Actual local Docker Compose over loopback HTTP",
+        "database": "PostgreSQL"
       },
       "test": "tests/browser/test_browser_labs.py::test_cross_origin_form[hardened]",
       "test_passed": true

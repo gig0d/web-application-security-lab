@@ -324,6 +324,26 @@ def test_audit_redaction_and_denials(secured):
     assert "private-body" not in text and DEMO_PASSWORD not in text and "token_hash" not in text
 
 
+def test_database_exception_text_does_not_expose_bound_document_data(secured):
+    from sqlalchemy import text
+    from sqlalchemy.exc import IntegrityError
+
+    with pytest.raises(IntegrityError) as captured, secured.app.state.engine.begin() as connection:
+        connection.execute(
+            text(
+                "INSERT INTO tickets(owner_id,title,description,status) VALUES (:owner,:title,:description,:status)"
+            ),
+            {
+                "owner": 999999,
+                "title": "Constraint fixture",
+                "description": "SENSITIVE-DOCUMENT-FIXTURE",
+                "status": "open",
+            },
+        )
+    assert "SENSITIVE-DOCUMENT-FIXTURE" not in str(captured.value)
+    assert "SQL parameters hidden" in str(captured.value)
+
+
 def test_reset_idempotent_and_sessions_invalidated(app_factory):
     env = app_factory()
     for _ in range(2):

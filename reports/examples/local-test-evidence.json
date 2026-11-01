@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-01T08:40:13.044504+00:00",
+  "generated_at": "2026-11-01T10:09:06.342579+00:00",
   "exit_status": 0,
   "database": "SQLite unless an observation explicitly says PostgreSQL",
   "observations": [
@@ -83,6 +83,7 @@
           "passed": true,
           "observation": {
             "assignment_status": 200,
+            "assignee_after": 4,
             "customer_form_hidden": true
           }
         },
@@ -100,6 +101,7 @@
           "passed": true,
           "observation": {
             "assignment_status": 403,
+            "assignee_after": 3,
             "customer_form_hidden": true
           }
         },
@@ -412,6 +414,7 @@
       "variant": "vulnerable",
       "observations": {
         "customer_assignment": 200,
+        "assignee_after": 4,
         "hidden_form": true,
         "legitimate_admin": 200
       },
@@ -423,6 +426,7 @@
       "variant": "hardened",
       "observations": {
         "customer_assignment": 403,
+        "assignee_after": 3,
         "hidden_form": true,
         "legitimate_admin": 200
       },

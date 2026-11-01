@@ -79,6 +79,6 @@ sequenceDiagram
 
 HarborDesk provides queue filtering, ticket detail, comments/private notes, uploads, status, assignment and profile forms. Static JavaScript uses `textContent` and DOM creation for untrusted API data. Only the two documented training HTML sinks bypass escaping. System fonts and local CSS/JS keep the UI offline and compatible with the hardened CSP.
 
-The control center can send fixed educational requests and invoke an authenticated synthetic-data reset. It cannot access Docker or execute shell commands. Container lifecycle remains on the host behind a fixed project/service allowlist. The controller and simulator join the two application networks; they do not route packets or forward arbitrary destinations. This deliberate intermediary trust is discussed in the threat model.
+The control center can send fixed educational requests and invoke an authenticated synthetic-data reset. It cannot access Docker or execute shell commands. Container lifecycle remains on the host behind a fixed project/service allowlist. The controller stays on its own network and reaches the pair through two fixed internal ingress listeners. The simulator joins the two application networks and serves only fixed fixtures. Intermediaries never route packets or accept arbitrary destinations.
 
 See [network isolation](network-isolation.md), [threat model](threat-model.md) and [ADR 0001](architecture-decisions/0001-isolated-comparable-applications.md). Implementation presence does not prove Docker/runtime behavior; consult the verification record.

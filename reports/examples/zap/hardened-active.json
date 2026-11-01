@@ -1,8 +1,8 @@
 {
   "@programName": "ZAP",
   "@version": "2.17.0",
-  "@generated": "Sun, 1 Nov 2026 09:06:54",
-  "created": "2026-11-01T09:06:54.963344518Z",
+  "@generated": "Sun, 1 Nov 2026 09:39:43",
+  "created": "2026-11-01T09:39:43.168737804Z",
   "insights": [
     {
       "level": "Low",
@@ -10,7 +10,7 @@
       "site": "",
       "key": "insight.log.error",
       "description": "ZAP errors logged - see the zap.log file for details",
-      "statistic": "41"
+      "statistic": "43"
     },
     {
       "level": "Info",
@@ -18,7 +18,7 @@
       "site": "",
       "key": "insight.network.failure",
       "description": "Percentage of network failures",
-      "statistic": "45"
+      "statistic": "44"
     },
     {
       "level": "Info",
@@ -34,7 +34,7 @@
       "site": "http://hardened:8080",
       "key": "insight.code.4xx",
       "description": "Percentage of responses with status code 4xx",
-      "statistic": "17"
+      "statistic": "15"
     },
     {
       "level": "Info",
@@ -42,7 +42,7 @@
       "site": "http://hardened:8080",
       "key": "insight.code.5xx",
       "description": "Percentage of responses with status code 5xx",
-      "statistic": "3"
+      "statistic": "5"
     },
     {
       "level": "Info",
@@ -127,7 +127,7 @@
           "desc": "<p>The given request has been identified as an authentication request. The 'Other Info' field contains a set of key=value lines which identify any relevant fields. If the request is in a context which has an Authentication Method set to \"Auto-Detect\" then this rule will change the authentication to match the request identified.</p>",
           "instances": [
             {
-              "id": "4",
+              "id": "2",
               "uri": "http://hardened:8080/?password=ZAP&username=ZAP",
               "nodeName": "http://hardened:8080/ (password,username)",
               "method": "GET",
@@ -154,7 +154,7 @@
           "reference": "<p>https://www.zaproxy.org/docs/desktop/addons/authentication-helper/auth-req-id/</p>",
           "cweid": "-1",
           "wascid": "-1",
-          "sourceid": "59"
+          "sourceid": "61"
         },
         {
           "pluginid": "10024",
@@ -167,7 +167,7 @@
           "desc": "<p>The request appeared to contain sensitive information leaked in the URL. This can violate PCI and most organizational compliance policies. You can configure the list of strings for this check to add or remove values specific to your environment.</p>",
           "instances": [
             {
-              "id": "5",
+              "id": "3",
               "uri": "http://hardened:8080/?password=ZAP&username=ZAP",
               "nodeName": "http://hardened:8080/ (password,username)",
               "method": "GET",
@@ -177,7 +177,7 @@
               "otherinfo": "The URL contains potentially sensitive information. The following string was found via the pattern: pass\npassword"
             },
             {
-              "id": "6",
+              "id": "4",
               "uri": "http://hardened:8080/?password=ZAP&username=ZAP",
               "nodeName": "http://hardened:8080/ (password,username)",
               "method": "GET",
@@ -194,7 +194,7 @@
           "reference": "",
           "cweid": "598",
           "wascid": "13",
-          "sourceid": "59"
+          "sourceid": "61"
         },
         {
           "pluginid": "10112",
@@ -224,7 +224,7 @@
           "reference": "<p>https://www.zaproxy.org/docs/desktop/addons/authentication-helper/session-mgmt-id/</p>",
           "cweid": "-1",
           "wascid": "-1",
-          "sourceid": "8"
+          "sourceid": "92"
         },
         {
           "pluginid": "10031",
@@ -237,7 +237,7 @@
           "desc": "<p>This check looks at user-supplied input in query string parameters and POST data to identify where certain HTML attribute values might be controlled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.</p>",
           "instances": [
             {
-              "id": "10",
+              "id": "8",
               "uri": "http://hardened:8080/portal?description=Zaproxy+alias+impedit+expedita+quisquam+pariatur+exercitationem.+Nemo+rerum+eveniet+dolores+rem+quia+dignissimos.&display_name=Alice+Morgan&q=ZAP&status=open&title=ZAP",
               "nodeName": "http://hardened:8080/portal (description,display_name,q,status,title)",
               "method": "GET",
@@ -247,7 +247,7 @@
               "otherinfo": "User-controlled HTML attribute values were found. Try injecting special characters to see if XSS might be possible. The page at the following URL:\n\nhttp://hardened:8080/portal?description=Zaproxy+alias+impedit+expedita+quisquam+pariatur+exercitationem.+Nemo+rerum+eveniet+dolores+rem+quia+dignissimos.&display_name=Alice+Morgan&q=ZAP&status=open&title=ZAP\n\nappears to include user input in:\na(n) [input] tag [value] attribute\n\nThe user input found was:\ndisplay_name=Alice Morgan\n\nThe user-controlled value was:\nalice morgan"
             },
             {
-              "id": "8",
+              "id": "7",
               "uri": "http://hardened:8080/portal?description=Zaproxy+alias+impedit+expedita+quisquam+pariatur+exercitationem.+Nemo+rerum+eveniet+dolores+rem+quia+dignissimos.&display_name=Alice+Morgan&title=ZAP",
               "nodeName": "http://hardened:8080/portal (description,display_name,title)",
               "method": "GET",
@@ -257,7 +257,7 @@
               "otherinfo": "User-controlled HTML attribute values were found. Try injecting special characters to see if XSS might be possible. The page at the following URL:\n\nhttp://hardened:8080/portal?description=Zaproxy+alias+impedit+expedita+quisquam+pariatur+exercitationem.+Nemo+rerum+eveniet+dolores+rem+quia+dignissimos.&display_name=Alice+Morgan&title=ZAP\n\nappears to include user input in:\na(n) [input] tag [value] attribute\n\nThe user input found was:\ndisplay_name=Alice Morgan\n\nThe user-controlled value was:\nalice morgan"
             },
             {
-              "id": "7",
+              "id": "5",
               "uri": "http://hardened:8080/portal?display_name=Alice+Morgan",
               "nodeName": "http://hardened:8080/portal (display_name)",
               "method": "GET",
@@ -267,7 +267,7 @@
               "otherinfo": "User-controlled HTML attribute values were found. Try injecting special characters to see if XSS might be possible. The page at the following URL:\n\nhttp://hardened:8080/portal?display_name=Alice+Morgan\n\nappears to include user input in:\na(n) [input] tag [value] attribute\n\nThe user input found was:\ndisplay_name=Alice Morgan\n\nThe user-controlled value was:\nalice morgan"
             },
             {
-              "id": "9",
+              "id": "6",
               "uri": "http://hardened:8080/portal?display_name=Alice+Morgan&q=ZAP&status=open",
               "nodeName": "http://hardened:8080/portal (display_name,q,status)",
               "method": "GET",
