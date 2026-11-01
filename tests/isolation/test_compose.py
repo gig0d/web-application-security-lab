@@ -48,7 +48,7 @@ def test_external_network_rejected():
 
 def test_unquoted_tmpfs_options_are_rejected():
     data = copy.deepcopy(config())
-    data["services"]["hardened"]["tmpfs"] = ["/tmp:size=32m", "mode=1777"]
+    data["services"]["hardened"]["tmpfs"] = ["/tmp:size=32m", "mode=1777"]  # noqa: S108
     assert validate(data)
 
 

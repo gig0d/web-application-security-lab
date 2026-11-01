@@ -45,6 +45,7 @@ jobs:
       - run: python -m mypy apps scripts
       - run: python -m scripts.isolation
       - run: python -m scripts.zap_scope
+      - run: python -m scripts.documentation --check
       - run: python -m pytest --junitxml=artifacts/ci/junit.xml --cov=apps/core --cov=apps/hardened --cov-report=xml:artifacts/ci/coverage.xml
       - run: python -m bandit -r apps/core apps/hardened apps/lab_control apps/simulator scripts -q -f json -o artifacts/ci/bandit.json
       - run: python -m pip_audit -r requirements.lock --disable-pip -f json -o artifacts/ci/pip-audit.json

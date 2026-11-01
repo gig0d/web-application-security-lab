@@ -82,7 +82,7 @@ def validate(config: dict[str, Any]) -> list[str]:
             errors.append(f"{name}: read-only root filesystem required")
         for temporary in service.get("tmpfs", []):
             if not isinstance(temporary, str) or temporary.split(":", 1)[0] not in {
-                "/tmp",
+                "/tmp",  # noqa: S108  # nosec B108
                 "/home/zap",
             }:
                 errors.append(f"{name}: invalid temporary filesystem mount")

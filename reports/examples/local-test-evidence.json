@@ -1,0 +1,733 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-11-01T08:40:13.044504+00:00",
+  "exit_status": 0,
+  "database": "SQLite unless an observation explicitly says PostgreSQL",
+  "observations": [
+    {
+      "lab_id": "lab01",
+      "variant": "vulnerable",
+      "observations": {
+        "control_evaluation": {
+          "variant": "vulnerable",
+          "passed": true,
+          "observation": {
+            "foreign_api_status": 200,
+            "foreign_ui_status": 200,
+            "own_status": 200
+          }
+        },
+        "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+      },
+      "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab01]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab01",
+      "variant": "hardened",
+      "observations": {
+        "control_evaluation": {
+          "variant": "hardened",
+          "passed": true,
+          "observation": {
+            "foreign_api_status": 404,
+            "foreign_ui_status": 404,
+            "own_status": 200
+          }
+        },
+        "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+      },
+      "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab01]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab02",
+      "variant": "vulnerable",
+      "observations": {
+        "control_evaluation": {
+          "variant": "vulnerable",
+          "passed": true,
+          "observation": {
+            "foreign_status": 200,
+            "own_status": 200
+          }
+        },
+        "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+      },
+      "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab02]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab02",
+      "variant": "hardened",
+      "observations": {
+        "control_evaluation": {
+          "variant": "hardened",
+          "passed": true,
+          "observation": {
+            "foreign_status": 404,
+            "own_status": 200
+          }
+        },
+        "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+      },
+      "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab02]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab03",
+      "variant": "vulnerable",
+      "observations": {
+        "control_evaluation": {
+          "variant": "vulnerable",
+          "passed": true,
+          "observation": {
+            "assignment_status": 200,
+            "customer_form_hidden": true
+          }
+        },
+        "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+      },
+      "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab03]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab03",
+      "variant": "hardened",
+      "observations": {
+        "control_evaluation": {
+          "variant": "hardened",
+          "passed": true,
+          "observation": {
+            "assignment_status": 403,
+            "customer_form_hidden": true
+          }
+        },
+        "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+      },
+      "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab03]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab04",
+      "variant": "vulnerable",
+      "observations": {
+        "control_evaluation": {
+          "variant": "vulnerable",
+          "passed": true,
+          "observation": {
+            "payload_status": 200,
+            "returned_ticket_ids": [
+              1,
+              2
+            ],
+            "legitimate_search_count": 1
+          }
+        },
+        "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+      },
+      "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab04]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab04",
+      "variant": "hardened",
+      "observations": {
+        "control_evaluation": {
+          "variant": "hardened",
+          "passed": true,
+          "observation": {
+            "payload_status": 200,
+            "returned_ticket_ids": [],
+            "legitimate_search_count": 1
+          }
+        },
+        "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+      },
+      "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab04]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab07",
+      "variant": "vulnerable",
+      "observations": {
+        "control_evaluation": {
+          "variant": "vulnerable",
+          "passed": true,
+          "observation": {
+            "forged_status": 200,
+            "state_changed": true
+          }
+        },
+        "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+      },
+      "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab07]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab07",
+      "variant": "hardened",
+      "observations": {
+        "control_evaluation": {
+          "variant": "hardened",
+          "passed": true,
+          "observation": {
+            "forged_status": 403,
+            "state_changed": false
+          }
+        },
+        "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+      },
+      "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab07]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab08",
+      "variant": "vulnerable",
+      "observations": {
+        "control_evaluation": {
+          "variant": "vulnerable",
+          "passed": true,
+          "observation": {
+            "equal_errors": false,
+            "bounded_attempt_statuses": [
+              401,
+              401,
+              401,
+              401,
+              401
+            ]
+          }
+        },
+        "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+      },
+      "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab08]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab08",
+      "variant": "hardened",
+      "observations": {
+        "control_evaluation": {
+          "variant": "hardened",
+          "passed": true,
+          "observation": {
+            "equal_errors": true,
+            "bounded_attempt_statuses": [
+              401,
+              401,
+              401,
+              401,
+              429
+            ]
+          }
+        },
+        "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+      },
+      "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab08]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab09",
+      "variant": "vulnerable",
+      "observations": {
+        "control_evaluation": {
+          "variant": "vulnerable",
+          "passed": true,
+          "observation": {
+            "logout_status": 200,
+            "replay_status": 200
+          }
+        },
+        "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+      },
+      "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab09]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab09",
+      "variant": "hardened",
+      "observations": {
+        "control_evaluation": {
+          "variant": "hardened",
+          "passed": true,
+          "observation": {
+            "logout_status": 200,
+            "replay_status": 401
+          }
+        },
+        "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+      },
+      "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab09]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab10",
+      "variant": "vulnerable",
+      "observations": {
+        "control_evaluation": {
+          "variant": "vulnerable",
+          "passed": true,
+          "observation": {
+            "unsafe_filename_status": 201,
+            "safe_upload_status": 201
+          }
+        },
+        "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+      },
+      "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab10]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab10",
+      "variant": "hardened",
+      "observations": {
+        "control_evaluation": {
+          "variant": "hardened",
+          "passed": true,
+          "observation": {
+            "unsafe_filename_status": 422,
+            "safe_upload_status": 201
+          }
+        },
+        "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+      },
+      "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab10]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab11",
+      "variant": "vulnerable",
+      "observations": {
+        "control_evaluation": {
+          "variant": "vulnerable",
+          "passed": true,
+          "observation": {
+            "private_status": 200,
+            "public_status": 200
+          }
+        },
+        "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+      },
+      "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab11]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab11",
+      "variant": "hardened",
+      "observations": {
+        "control_evaluation": {
+          "variant": "hardened",
+          "passed": true,
+          "observation": {
+            "private_status": 403,
+            "public_status": 200
+          }
+        },
+        "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+      },
+      "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab11]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab12",
+      "variant": "vulnerable",
+      "observations": {
+        "control_evaluation": {
+          "variant": "vulnerable",
+          "passed": true,
+          "observation": {
+            "error_status": 500,
+            "csp_present": false,
+            "generic_error": false
+          }
+        },
+        "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+      },
+      "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab12]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab12",
+      "variant": "hardened",
+      "observations": {
+        "control_evaluation": {
+          "variant": "hardened",
+          "passed": true,
+          "observation": {
+            "error_status": 500,
+            "csp_present": true,
+            "generic_error": true
+          }
+        },
+        "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+      },
+      "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab12]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab01",
+      "variant": "vulnerable",
+      "observations": {
+        "foreign_api": 200,
+        "foreign_ui": 200,
+        "foreign_update": 200,
+        "own": 200
+      },
+      "test": "tests/training/test_labs.py::test_lab01_objects[vulnerable]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab01",
+      "variant": "hardened",
+      "observations": {
+        "foreign_api": 404,
+        "foreign_ui": 404,
+        "foreign_update": 404,
+        "own": 200
+      },
+      "test": "tests/training/test_labs.py::test_lab01_objects[hardened]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab02",
+      "variant": "vulnerable",
+      "observations": {
+        "foreign_download": 200
+      },
+      "test": "tests/training/test_labs.py::test_lab02_files[vulnerable]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab02",
+      "variant": "hardened",
+      "observations": {
+        "foreign_download": 404
+      },
+      "test": "tests/training/test_labs.py::test_lab02_files[hardened]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab03",
+      "variant": "vulnerable",
+      "observations": {
+        "customer_assignment": 200,
+        "hidden_form": true,
+        "legitimate_admin": 200
+      },
+      "test": "tests/training/test_labs.py::test_lab03_roles[vulnerable]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab03",
+      "variant": "hardened",
+      "observations": {
+        "customer_assignment": 403,
+        "hidden_form": true,
+        "legitimate_admin": 200
+      },
+      "test": "tests/training/test_labs.py::test_lab03_roles[hardened]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab04",
+      "variant": "vulnerable",
+      "observations": {
+        "returned_ticket_ids": [
+          1,
+          2
+        ],
+        "database": "SQLite"
+      },
+      "test": "tests/training/test_labs.py::test_lab04_sql[vulnerable]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab04",
+      "variant": "hardened",
+      "observations": {
+        "returned_ticket_ids": [],
+        "database": "SQLite"
+      },
+      "test": "tests/training/test_labs.py::test_lab04_sql[hardened]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab05",
+      "variant": "vulnerable",
+      "observations": {
+        "raw_script_in_html": true,
+        "browser_execution_verified": false
+      },
+      "test": "tests/training/test_labs.py::test_lab05_stored_rendering[vulnerable]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab05",
+      "variant": "hardened",
+      "observations": {
+        "raw_script_in_html": false,
+        "browser_execution_verified": false
+      },
+      "test": "tests/training/test_labs.py::test_lab05_stored_rendering[hardened]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab06",
+      "variant": "vulnerable",
+      "observations": {
+        "raw_script_in_html": true,
+        "browser_execution_verified": false
+      },
+      "test": "tests/training/test_labs.py::test_lab06_reflected_rendering[vulnerable]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab06",
+      "variant": "hardened",
+      "observations": {
+        "raw_script_in_html": false,
+        "browser_execution_verified": false
+      },
+      "test": "tests/training/test_labs.py::test_lab06_reflected_rendering[hardened]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab07",
+      "variant": "vulnerable",
+      "observations": {
+        "forged_status": 200,
+        "observed_name": "Forged Local Name",
+        "browser_verified": false
+      },
+      "test": "tests/training/test_labs.py::test_lab07_csrf[vulnerable]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab07",
+      "variant": "hardened",
+      "observations": {
+        "forged_status": 403,
+        "observed_name": "Alice Morgan",
+        "browser_verified": false
+      },
+      "test": "tests/training/test_labs.py::test_lab07_csrf[hardened]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab08",
+      "variant": "vulnerable",
+      "observations": {
+        "identical_errors": false,
+        "bounded_statuses": [
+          401,
+          401,
+          401,
+          401,
+          401
+        ]
+      },
+      "test": "tests/training/test_labs.py::test_lab08_authentication[vulnerable]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab08",
+      "variant": "hardened",
+      "observations": {
+        "identical_errors": true,
+        "bounded_statuses": [
+          401,
+          401,
+          401,
+          401,
+          429
+        ]
+      },
+      "test": "tests/training/test_labs.py::test_lab08_authentication[hardened]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab09",
+      "variant": "vulnerable",
+      "observations": {
+        "stale_cookie_status": 200
+      },
+      "test": "tests/training/test_labs.py::test_lab09_sessions[vulnerable]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab09",
+      "variant": "hardened",
+      "observations": {
+        "stale_cookie_status": 401
+      },
+      "test": "tests/training/test_labs.py::test_lab09_sessions[hardened]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab10",
+      "variant": "vulnerable",
+      "observations": {
+        "unsafe_filename_status": 201,
+        "valid_upload": 201
+      },
+      "test": "tests/training/test_labs.py::test_lab10_uploads[vulnerable]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab10",
+      "variant": "hardened",
+      "observations": {
+        "unsafe_filename_status": 422,
+        "valid_upload": 201
+      },
+      "test": "tests/training/test_labs.py::test_lab10_uploads[hardened]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab11",
+      "variant": "vulnerable",
+      "observations": {
+        "private_status": 200,
+        "destinations": [
+          "http://simulator:8080/private/metadata",
+          "http://simulator:8080/public/handbook"
+        ],
+        "transport": "controlled fixture; not real Docker networking"
+      },
+      "test": "tests/training/test_labs.py::test_lab11_preview[vulnerable]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab11",
+      "variant": "hardened",
+      "observations": {
+        "private_status": 403,
+        "destinations": [
+          "http://simulator:8080/public/handbook"
+        ],
+        "transport": "controlled fixture; not real Docker networking"
+      },
+      "test": "tests/training/test_labs.py::test_lab11_preview[hardened]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab12",
+      "variant": "vulnerable",
+      "observations": {
+        "error_status": 500,
+        "csp_present": false,
+        "synthetic_debug_exposed": true
+      },
+      "test": "tests/training/test_labs.py::test_lab12_configuration[vulnerable]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab12",
+      "variant": "hardened",
+      "observations": {
+        "error_status": 500,
+        "csp_present": true,
+        "synthetic_debug_exposed": false
+      },
+      "test": "tests/training/test_labs.py::test_lab12_configuration[hardened]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab05",
+      "variant": "vulnerable",
+      "observations": {
+        "browser": "Chromium",
+        "dom_marker": "stored",
+        "browser_execution_verified": true,
+        "screenshot": "artifacts/browser/lab05-vulnerable.png"
+      },
+      "test": "tests/browser/test_browser_labs.py::test_stored_xss[vulnerable]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab05",
+      "variant": "hardened",
+      "observations": {
+        "browser": "Chromium",
+        "dom_marker": null,
+        "browser_execution_verified": true,
+        "screenshot": "artifacts/browser/lab05-hardened.png"
+      },
+      "test": "tests/browser/test_browser_labs.py::test_stored_xss[hardened]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab06",
+      "variant": "vulnerable",
+      "observations": {
+        "browser": "Chromium",
+        "dom_marker": "reflected",
+        "browser_execution_verified": true,
+        "screenshot": "artifacts/browser/lab06-vulnerable.png"
+      },
+      "test": "tests/browser/test_browser_labs.py::test_reflected_xss[vulnerable]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab06",
+      "variant": "hardened",
+      "observations": {
+        "browser": "Chromium",
+        "dom_marker": null,
+        "browser_execution_verified": true,
+        "screenshot": "artifacts/browser/lab06-hardened.png"
+      },
+      "test": "tests/browser/test_browser_labs.py::test_reflected_xss[hardened]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab07",
+      "variant": "vulnerable",
+      "observations": {
+        "browser": "Chromium",
+        "browser_verified": true,
+        "forged_status": 200,
+        "observed_name": "Forged Local Name"
+      },
+      "test": "tests/browser/test_browser_labs.py::test_cross_origin_form[vulnerable]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab07",
+      "variant": "hardened",
+      "observations": {
+        "browser": "Chromium",
+        "browser_verified": true,
+        "forged_status": 403,
+        "observed_name": "Alice Morgan"
+      },
+      "test": "tests/browser/test_browser_labs.py::test_cross_origin_form[hardened]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab01",
+      "variant": "vulnerable",
+      "observations": {
+        "browser": "Chromium",
+        "foreign_ui_status": 200,
+        "own_ui_visible": true,
+        "screenshot": "artifacts/browser/lab01-vulnerable.png"
+      },
+      "test": "tests/browser/test_browser_labs.py::test_object_authorization_in_browser[vulnerable]",
+      "test_passed": true
+    },
+    {
+      "lab_id": "lab01",
+      "variant": "hardened",
+      "observations": {
+        "browser": "Chromium",
+        "foreign_ui_status": 404,
+        "own_ui_visible": true,
+        "screenshot": "artifacts/browser/lab01-hardened.png"
+      },
+      "test": "tests/browser/test_browser_labs.py::test_object_authorization_in_browser[hardened]",
+      "test_passed": true
+    }
+  ]
+}

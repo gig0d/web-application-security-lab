@@ -1,0 +1,15 @@
+{
+  "scope": "Transient fixture session/CSRF values only; scanner observations preserved",
+  "files": [
+    {
+      "file": "hardened-passive.json",
+      "original_sha256": "49f20ef8f5a5091f87af223071f9fab3af7ea8a0b8cac067f39bd90226bf29bd",
+      "redacted_sha256": "4238e8ae7e410fc8b9e4e626435ffb147f0046eef564f298f12e464ba88acf63"
+    },
+    {
+      "file": "hardened-passive.html",
+      "original_sha256": "85c439ca04d75e6fa7afdf7378b9f88ebe54e4c86ea2dd82080ef49b452e138f",
+      "redacted_sha256": "030bf705ce9253ad43d0c415bef465b5aa490e09fdb24cba2004583be86bfc50"
+    }
+  ]
+}

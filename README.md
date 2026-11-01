@@ -90,5 +90,6 @@ Reset restores only the two named Aegis business volumes and preserves learning 
 - [Authentication](docs/authentication.md), [authorization](docs/authorization.md), [secure coding](docs/secure-coding.md), [OWASP mappings](docs/owasp-mapping.md)
 - [Security testing](docs/security-testing.md), [ZAP automation](docs/zap-automation.md), [reporting](docs/reporting.md), [troubleshooting](docs/troubleshooting.md)
 - [Security policy](SECURITY.md), [contributing](CONTRIBUTING.md), [engineering contract](AGENTS.md), [roadmap](docs/roadmap.md)
+- [Dependency versions](docs/dependencies.md), [structured security logging](docs/security-logging.md), [verified milestones](docs/milestones.md)
 
 No public deployment workflow is provided. Selected OWASP mappings describe educational relevance and do not assert complete category coverage or ASVS compliance.

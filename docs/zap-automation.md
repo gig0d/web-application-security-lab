@@ -34,6 +34,6 @@ High-risk alerts produce a nonzero plan exit. Medium and low observations still 
 | SSRF simulation | Fixed selectors and destination authorization require scenario-aware tests |
 | Misconfiguration | Passive headers may be reported, but local HTTP limitations need contextual review |
 
-No local ZAP report has been generated on the initial development machine because Docker is unavailable. See `docs/verification.md` for actual later runs. The report directory is deliberately not populated with sample scan output.
+Docker remains unavailable on the initial Windows development machine. An actual authenticated passive scan succeeded on the hosted runner; sanitized original observations are retained under `reports/examples/zap` with execution provenance. Later outcomes are in `docs/verification.md`. The wrapper redacts transient fixture cookie/CSRF/password values from reports while retaining observations and before/after hashes.
 
 Plan syntax follows the official [environment](https://www.zaproxy.org/docs/desktop/addons/automation-framework/environment/), [requestor](https://www.zaproxy.org/docs/desktop/addons/automation-framework/job-requestor/), [spider](https://www.zaproxy.org/docs/desktop/addons/spider/automation/), [active scan](https://www.zaproxy.org/docs/desktop/addons/automation-framework/job-ascan/) and [report](https://www.zaproxy.org/docs/desktop/addons/report-generation/automation/) documentation. Runtime validation remains a separate acceptance check.

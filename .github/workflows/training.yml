@@ -33,6 +33,9 @@ jobs:
       - run: python -m scripts.lab init
       - run: python -m scripts.lab up
       - run: python -m scripts.lab inspect
+      - run: python -m scripts.verify_stack
+      - name: Real browser comparisons against the running Docker and PostgreSQL pair
+        run: python -m pytest tests/browser --compose --evidence-output=artifacts/compose/browser-evidence.json --junitxml=artifacts/compose/browser-junit.xml
       - name: Run explicitly selected active check
         if: inputs.active_hardened_search
         run: |

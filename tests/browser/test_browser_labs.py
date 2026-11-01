@@ -21,7 +21,9 @@ def login(live):
 
 
 def capture(live, lab_id):
-    folder = Path("artifacts/browser")
+    folder = Path(
+        "artifacts/compose/browser" if "Docker" in live.transport else "artifacts/browser"
+    )
     folder.mkdir(parents=True, exist_ok=True)
     path = folder / f"{lab_id}-{live.variant}.png"
     live.page.screenshot(path=str(path), full_page=True)
@@ -121,11 +123,15 @@ def test_object_authorization_in_browser(live, evidence):
     )
 
 
-def test_dashboard_notebook_and_responsive_layout(browser, servers, tmp_path):
+def test_dashboard_notebook_and_responsive_layout(browser, servers, tmp_path, request):
     from apps.core.config import Settings
     from apps.lab_control.main import create_control
 
-    base = servers(create_control(Settings(progress_path=tmp_path / "control.db")), 18082)
+    base = (
+        "http://127.0.0.1:18082"
+        if request.config.getoption("--compose")
+        else servers(create_control(Settings(progress_path=tmp_path / "control.db")), 18082)
+    )
     with browser.new_context(viewport={"width": 1440, "height": 1000}) as context:
         page = context.new_page()
         page.goto(base)
@@ -136,7 +142,11 @@ def test_dashboard_notebook_and_responsive_layout(browser, servers, tmp_path):
         page.locator("#lab-filter").fill("SQL")
         assert page.locator(".lab-card:visible").count() == 1
         page.locator("#lab-filter").fill("")
-        folder = Path("artifacts/browser")
+        folder = Path(
+            "artifacts/compose/browser"
+            if request.config.getoption("--compose")
+            else "artifacts/browser"
+        )
         folder.mkdir(parents=True, exist_ok=True)
         page.screenshot(path=str(folder / "control-desktop.png"), full_page=True)
         page.goto(base + "/labs/lab01")

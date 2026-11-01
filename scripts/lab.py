@@ -7,6 +7,7 @@ import secrets
 import yaml
 
 from scripts.isolation import ROOT, compose, docker, effective_runtime, validate
+from scripts.sanitize_evidence import sanitize_reports
 from scripts.zap_scope import validate_plan
 
 
@@ -96,20 +97,26 @@ def main() -> None:
             raise SystemExit("Scan plan rejected: " + "; ".join(plan_errors))
         expected_report = ROOT / "artifacts/zap" / plan.replace(".yaml", ".json")
         previous_mtime = expected_report.stat().st_mtime_ns if expected_report.exists() else 0
-        compose(
-            [
-                "--profile",
-                "scan",
-                "run",
-                "--rm",
-                "zap-hardened",
-                "zap.sh",
-                "-cmd",
-                "-autorun",
-                f"/zap/plans/{plan}",
-            ]
-        )
-        if not expected_report.exists() or expected_report.stat().st_mtime_ns <= previous_mtime:
+        try:
+            compose(
+                [
+                    "--profile",
+                    "scan",
+                    "run",
+                    "--rm",
+                    "zap-hardened",
+                    "zap.sh",
+                    "-cmd",
+                    "-autorun",
+                    f"/zap/plans/{plan}",
+                ]
+            )
+        finally:
+            fresh_report = (
+                expected_report.exists() and expected_report.stat().st_mtime_ns > previous_mtime
+            )
+            sanitize_reports(ROOT / "artifacts/zap", plan.replace(".yaml", ""))
+        if not fresh_report:
             raise SystemExit("Scanner exited without the expected JSON report")
         print("Actual scan artifacts are in artifacts/zap; inspect findings and limitations")
 

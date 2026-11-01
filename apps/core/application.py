@@ -7,11 +7,12 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
-from apps.core.audit import record
+from apps.core.audit import logger, record
 from apps.core.config import Settings
 from apps.core.database import make_engine
 from apps.core.routes import router
@@ -82,6 +83,17 @@ def create_app(policy: SecurePolicy, settings: Settings | None = None) -> FastAP
     async def security_headers(request: Request, call_next: Any) -> Any:
         request.state.request_id = secrets.token_hex(16)
         response = await call_next(request)
+        if response.status_code in {400, 403, 404, 405, 413, 415, 422}:
+            try:
+                with app.state.sessions() as db:
+                    record(
+                        request, db, "http.rejected", "deny", resource=f"method:{request.method}"
+                    )
+                    db.commit()
+            except SQLAlchemyError:
+                logger.error(
+                    '{"schema_version":1,"event":"audit.persistence_failed","outcome":"error"}'
+                )
         response.headers.update(policy.headers())
         response.headers["X-Request-ID"] = request.state.request_id
         return response

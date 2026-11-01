@@ -4,7 +4,8 @@ from sqlalchemy.orm import Session
 from apps.core.models import Attachment, Comment, Ticket, User
 from apps.core.security import PASSWORDS
 
-DEMO_PASSWORD = "HarborDesk-Local-Only!42"  # noqa: S105  # nosec B105 - public fixture
+# Public disposable fixture, not an operational credential.
+DEMO_PASSWORD = "HarborDesk-Local-Only!42"  # noqa: S105  # nosec B105
 
 
 def seed(db: Session) -> None:

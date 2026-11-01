@@ -8,6 +8,10 @@ from sqlalchemy.orm import Session
 from apps.core.models import AuditEvent
 
 logger = logging.getLogger("aegis.security")
+logger.setLevel(logging.INFO)
+logger.propagate = False
+if not logger.handlers:
+    logger.addHandler(logging.StreamHandler())
 
 
 def record(
@@ -31,6 +35,8 @@ def record(
     logger.info(
         json.dumps(
             {
+                "schema_version": 1,
+                "at": entry.at,
                 "event": event,
                 "outcome": outcome,
                 "actor_id": actor_id,

@@ -49,7 +49,8 @@ def closure(names: list[str]) -> set[str]:
 def entry(name: str) -> str:
     version = importlib.metadata.version(name)
     url = f"https://pypi.org/pypi/{name}/{version}/json"
-    with urllib.request.urlopen(url, timeout=30) as response:  # nosec B310 - fixed HTTPS PyPI
+    # Fixed official HTTPS PyPI endpoint; no caller-provided scheme or host.
+    with urllib.request.urlopen(url, timeout=30) as response:  # nosec B310
         data = json.load(response)
     hashes = sorted({f["digests"]["sha256"] for f in data["urls"] if not f["yanked"]})
     if not hashes:

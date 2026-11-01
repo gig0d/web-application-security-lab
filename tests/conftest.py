@@ -22,6 +22,11 @@ EVIDENCE = []
 
 def pytest_addoption(parser):
     parser.addoption("--evidence-output", default="artifacts/tests/evidence.json")
+    parser.addoption(
+        "--compose",
+        action="store_true",
+        help="Use and reset the explicitly started disposable local Compose lab for browser tests",
+    )
 
 
 @pytest.fixture(scope="session")
@@ -80,6 +85,9 @@ def evidence(request):
     observations = []
 
     def observe(lab_id, variant, **values):
+        if request.config.getoption("--compose"):
+            values.setdefault("transport", "Actual local Docker Compose over loopback HTTP")
+            values.setdefault("database", "PostgreSQL")
         observations.append({"lab_id": lab_id, "variant": variant, "observations": values})
 
     yield observe
@@ -114,7 +122,9 @@ def pytest_sessionfinish(session, exitstatus):
                 "schema_version": 1,
                 "generated_at": datetime.now(UTC).isoformat(),
                 "exit_status": int(exitstatus),
-                "database": "SQLite unless an observation explicitly says PostgreSQL",
+                "database": "PostgreSQL via actual Docker Compose"
+                if session.config.getoption("--compose")
+                else "SQLite unless an observation explicitly says PostgreSQL",
                 "observations": EVIDENCE,
             },
             indent=2,

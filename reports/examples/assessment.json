@@ -1,0 +1,2016 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-11-01T08:41:11.898122+00:00",
+  "scope": "Aegis local isolated HarborDesk only",
+  "findings": [
+    {
+      "finding_id": "AEGIS-01",
+      "lab_id": "lab01",
+      "name": "Broken Object-Level Authorization",
+      "cwe": "CWE-639",
+      "owasp_top10_2025": "A01:2025 \u2014 Broken Access Control",
+      "asvs_5_0_0": [
+        "v5.0.0-8.2.2",
+        "v5.0.0-8.3.1"
+      ],
+      "wstg_4_2": "WSTG-v42-ATHZ-04",
+      "affected_component": "apps/core/dependencies.py: authorized_ticket; apps/vulnerable/policy.py: ticket",
+      "preconditions": "Synthetic local account; isolated repository-created services only.",
+      "severity": "High",
+      "severity_rationale": "Qualitative fictional business impact; no CVSS score is claimed.",
+      "reproduction_steps": [
+        "Sign in as alice in each application.",
+        "Open /tickets/2 and request GET /api/tickets/2.",
+        "Attempt PATCH /api/tickets/2 with status closed using Alice's own CSRF token.",
+        "Confirm Alice can still read and update ticket 1."
+      ],
+      "expected_behavior": "Training returns Bob's synthetic renewal and accepts its update; hardened returns 404 for both API and HTML access and rejects mutation.",
+      "observed_behavior": [
+        {
+          "lab_id": "lab01",
+          "variant": "vulnerable",
+          "observations": {
+            "control_evaluation": {
+              "variant": "vulnerable",
+              "passed": true,
+              "observation": {
+                "foreign_api_status": 200,
+                "foreign_ui_status": 200,
+                "own_status": 200
+              }
+            },
+            "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+          },
+          "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab01]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab01",
+          "variant": "hardened",
+          "observations": {
+            "control_evaluation": {
+              "variant": "hardened",
+              "passed": true,
+              "observation": {
+                "foreign_api_status": 404,
+                "foreign_ui_status": 404,
+                "own_status": 200
+              }
+            },
+            "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+          },
+          "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab01]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab01",
+          "variant": "vulnerable",
+          "observations": {
+            "foreign_api": 200,
+            "foreign_ui": 200,
+            "foreign_update": 200,
+            "own": 200
+          },
+          "test": "tests/training/test_labs.py::test_lab01_objects[vulnerable]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab01",
+          "variant": "hardened",
+          "observations": {
+            "foreign_api": 404,
+            "foreign_ui": 404,
+            "foreign_update": 404,
+            "own": 200
+          },
+          "test": "tests/training/test_labs.py::test_lab01_objects[hardened]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab01",
+          "variant": "vulnerable",
+          "observations": {
+            "browser": "Chromium",
+            "foreign_ui_status": 200,
+            "own_ui_visible": true,
+            "screenshot": "artifacts/browser/lab01-vulnerable.png"
+          },
+          "test": "tests/browser/test_browser_labs.py::test_object_authorization_in_browser[vulnerable]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab01",
+          "variant": "hardened",
+          "observations": {
+            "browser": "Chromium",
+            "foreign_ui_status": 404,
+            "own_ui_visible": true,
+            "screenshot": "artifacts/browser/lab01-hardened.png"
+          },
+          "test": "tests/browser/test_browser_labs.py::test_object_authorization_in_browser[hardened]",
+          "test_passed": true
+        }
+      ],
+      "evidence": {
+        "status": "passed",
+        "vulnerable_demonstrated": true,
+        "hardened_verified": true,
+        "checks": [
+          {
+            "lab_id": "lab01",
+            "variant": "vulnerable",
+            "observations": {
+              "control_evaluation": {
+                "variant": "vulnerable",
+                "passed": true,
+                "observation": {
+                  "foreign_api_status": 200,
+                  "foreign_ui_status": 200,
+                  "own_status": 200
+                }
+              },
+              "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+            },
+            "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab01]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab01",
+            "variant": "hardened",
+            "observations": {
+              "control_evaluation": {
+                "variant": "hardened",
+                "passed": true,
+                "observation": {
+                  "foreign_api_status": 404,
+                  "foreign_ui_status": 404,
+                  "own_status": 200
+                }
+              },
+              "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+            },
+            "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab01]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab01",
+            "variant": "vulnerable",
+            "observations": {
+              "foreign_api": 200,
+              "foreign_ui": 200,
+              "foreign_update": 200,
+              "own": 200
+            },
+            "test": "tests/training/test_labs.py::test_lab01_objects[vulnerable]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab01",
+            "variant": "hardened",
+            "observations": {
+              "foreign_api": 404,
+              "foreign_ui": 404,
+              "foreign_update": 404,
+              "own": 200
+            },
+            "test": "tests/training/test_labs.py::test_lab01_objects[hardened]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab01",
+            "variant": "vulnerable",
+            "observations": {
+              "browser": "Chromium",
+              "foreign_ui_status": 200,
+              "own_ui_visible": true,
+              "screenshot": "artifacts/browser/lab01-vulnerable.png"
+            },
+            "test": "tests/browser/test_browser_labs.py::test_object_authorization_in_browser[vulnerable]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab01",
+            "variant": "hardened",
+            "observations": {
+              "browser": "Chromium",
+              "foreign_ui_status": 404,
+              "own_ui_visible": true,
+              "screenshot": "artifacts/browser/lab01-hardened.png"
+            },
+            "test": "tests/browser/test_browser_labs.py::test_object_authorization_in_browser[hardened]",
+            "test_passed": true
+          }
+        ],
+        "limitations": [
+          "Local test evidence; database/transport/browser details are recorded per observation. This does not establish Docker networking or ZAP outcomes."
+        ]
+      },
+      "business_impact": "Alice and Bob maintain separate support requests. Bob's renewal ticket must remain private to Bob and support staff.",
+      "root_cause": "TrainingPolicy.ticket returns True without comparing owner_id to the authenticated user.",
+      "recommended_remediation": "SecurePolicy.ticket checks ownership or an explicit support role; every ticket read, update, comment and attachment-list route invokes the shared authorization function.",
+      "implemented_remediation": "SecurePolicy.ticket checks ownership or an explicit support role; every ticket read, update, comment and attachment-list route invokes the shared authorization function.",
+      "hardened_verification": true,
+      "residual_risk": "Support employees intentionally access all tickets. This is a documented business permission, not tenant isolation for support staff.",
+      "references": [
+        "https://top10.owasp.org/2025/",
+        "https://github.com/OWASP/ASVS/tree/v5.0.0",
+        "https://owasp.org/www-project-web-security-testing-guide/v42/"
+      ]
+    },
+    {
+      "finding_id": "AEGIS-02",
+      "lab_id": "lab02",
+      "name": "Unauthorized File Access",
+      "cwe": "CWE-862",
+      "owasp_top10_2025": "A01:2025 \u2014 Broken Access Control",
+      "asvs_5_0_0": [
+        "v5.0.0-8.2.2",
+        "v5.0.0-5.4.1"
+      ],
+      "wstg_4_2": "WSTG-v42-ATHZ-04",
+      "affected_component": "apps/core/routes.py: download",
+      "preconditions": "Synthetic local account; isolated repository-created services only.",
+      "severity": "High",
+      "severity_rationale": "Qualitative fictional business impact; no CVSS score is claimed.",
+      "reproduction_steps": [
+        "Sign in as alice.",
+        "Request GET /api/attachments/2 in each application.",
+        "Download /api/attachments/1 to verify legitimate access.",
+        "Inspect Content-Disposition and Content-Type on successful downloads."
+      ],
+      "expected_behavior": "Training reveals Bob's synthetic document; hardened returns 404. Alice's own text document downloads in both.",
+      "observed_behavior": [
+        {
+          "lab_id": "lab02",
+          "variant": "vulnerable",
+          "observations": {
+            "control_evaluation": {
+              "variant": "vulnerable",
+              "passed": true,
+              "observation": {
+                "foreign_status": 200,
+                "own_status": 200
+              }
+            },
+            "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+          },
+          "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab02]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab02",
+          "variant": "hardened",
+          "observations": {
+            "control_evaluation": {
+              "variant": "hardened",
+              "passed": true,
+              "observation": {
+                "foreign_status": 404,
+                "own_status": 200
+              }
+            },
+            "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+          },
+          "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab02]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab02",
+          "variant": "vulnerable",
+          "observations": {
+            "foreign_download": 200
+          },
+          "test": "tests/training/test_labs.py::test_lab02_files[vulnerable]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab02",
+          "variant": "hardened",
+          "observations": {
+            "foreign_download": 404
+          },
+          "test": "tests/training/test_labs.py::test_lab02_files[hardened]",
+          "test_passed": true
+        }
+      ],
+      "evidence": {
+        "status": "passed",
+        "vulnerable_demonstrated": true,
+        "hardened_verified": true,
+        "checks": [
+          {
+            "lab_id": "lab02",
+            "variant": "vulnerable",
+            "observations": {
+              "control_evaluation": {
+                "variant": "vulnerable",
+                "passed": true,
+                "observation": {
+                  "foreign_status": 200,
+                  "own_status": 200
+                }
+              },
+              "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+            },
+            "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab02]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab02",
+            "variant": "hardened",
+            "observations": {
+              "control_evaluation": {
+                "variant": "hardened",
+                "passed": true,
+                "observation": {
+                  "foreign_status": 404,
+                  "own_status": 200
+                }
+              },
+              "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+            },
+            "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab02]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab02",
+            "variant": "vulnerable",
+            "observations": {
+              "foreign_download": 200
+            },
+            "test": "tests/training/test_labs.py::test_lab02_files[vulnerable]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab02",
+            "variant": "hardened",
+            "observations": {
+              "foreign_download": 404
+            },
+            "test": "tests/training/test_labs.py::test_lab02_files[hardened]",
+            "test_passed": true
+          }
+        ],
+        "limitations": [
+          "Local test evidence; database/transport/browser details are recorded per observation. This does not establish Docker networking or ZAP outcomes."
+        ]
+      },
+      "business_impact": "A private renewal document belongs to Bob's ticket, but a download endpoint accepts its numeric identifier.",
+      "root_cause": "TrainingPolicy.attachment checks neither ticket ownership nor the requester's role.",
+      "recommended_remediation": "Resolve the attachment's parent ticket and apply the same object policy before reading content. Return downloads as text/plain attachments with nosniff.",
+      "implemented_remediation": "Resolve the attachment's parent ticket and apply the same object policy before reading content. Return downloads as text/plain attachments with nosniff.",
+      "hardened_verification": true,
+      "residual_risk": "Attachment identifiers are enumerable by design. Authorization, rather than identifier secrecy, provides the boundary.",
+      "references": [
+        "https://top10.owasp.org/2025/",
+        "https://github.com/OWASP/ASVS/tree/v5.0.0",
+        "https://owasp.org/www-project-web-security-testing-guide/v42/"
+      ]
+    },
+    {
+      "finding_id": "AEGIS-03",
+      "lab_id": "lab03",
+      "name": "Vertical Privilege Escalation",
+      "cwe": "CWE-269",
+      "owasp_top10_2025": "A01:2025 \u2014 Broken Access Control",
+      "asvs_5_0_0": [
+        "v5.0.0-8.2.1",
+        "v5.0.0-8.3.1"
+      ],
+      "wstg_4_2": "WSTG-v42-ATHZ-03",
+      "affected_component": "apps/core/dependencies.py: administrator",
+      "preconditions": "Synthetic local account; isolated repository-created services only.",
+      "severity": "High",
+      "severity_rationale": "Qualitative fictional business impact; no CVSS score is claimed.",
+      "reproduction_steps": [
+        "Sign in as alice and observe that /tickets/1 has no assignment form.",
+        "POST /api/admin/tickets/1/assign with assignee_id 3 and Alice's CSRF token.",
+        "Repeat as admin to verify the legitimate administrative workflow."
+      ],
+      "expected_behavior": "Training accepts Alice's direct request despite the hidden form; hardened returns 403. A real admin can assign in both.",
+      "observed_behavior": [
+        {
+          "lab_id": "lab03",
+          "variant": "vulnerable",
+          "observations": {
+            "control_evaluation": {
+              "variant": "vulnerable",
+              "passed": true,
+              "observation": {
+                "assignment_status": 200,
+                "customer_form_hidden": true
+              }
+            },
+            "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+          },
+          "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab03]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab03",
+          "variant": "hardened",
+          "observations": {
+            "control_evaluation": {
+              "variant": "hardened",
+              "passed": true,
+              "observation": {
+                "assignment_status": 403,
+                "customer_form_hidden": true
+              }
+            },
+            "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+          },
+          "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab03]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab03",
+          "variant": "vulnerable",
+          "observations": {
+            "customer_assignment": 200,
+            "hidden_form": true,
+            "legitimate_admin": 200
+          },
+          "test": "tests/training/test_labs.py::test_lab03_roles[vulnerable]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab03",
+          "variant": "hardened",
+          "observations": {
+            "customer_assignment": 403,
+            "hidden_form": true,
+            "legitimate_admin": 200
+          },
+          "test": "tests/training/test_labs.py::test_lab03_roles[hardened]",
+          "test_passed": true
+        }
+      ],
+      "evidence": {
+        "status": "passed",
+        "vulnerable_demonstrated": true,
+        "hardened_verified": true,
+        "checks": [
+          {
+            "lab_id": "lab03",
+            "variant": "vulnerable",
+            "observations": {
+              "control_evaluation": {
+                "variant": "vulnerable",
+                "passed": true,
+                "observation": {
+                  "assignment_status": 200,
+                  "customer_form_hidden": true
+                }
+              },
+              "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+            },
+            "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab03]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab03",
+            "variant": "hardened",
+            "observations": {
+              "control_evaluation": {
+                "variant": "hardened",
+                "passed": true,
+                "observation": {
+                  "assignment_status": 403,
+                  "customer_form_hidden": true
+                }
+              },
+              "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+            },
+            "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab03]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab03",
+            "variant": "vulnerable",
+            "observations": {
+              "customer_assignment": 200,
+              "hidden_form": true,
+              "legitimate_admin": 200
+            },
+            "test": "tests/training/test_labs.py::test_lab03_roles[vulnerable]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab03",
+            "variant": "hardened",
+            "observations": {
+              "customer_assignment": 403,
+              "hidden_form": true,
+              "legitimate_admin": 200
+            },
+            "test": "tests/training/test_labs.py::test_lab03_roles[hardened]",
+            "test_passed": true
+          }
+        ],
+        "limitations": [
+          "Local test evidence; database/transport/browser details are recorded per observation. This does not establish Docker networking or ZAP outcomes."
+        ]
+      },
+      "business_impact": "Only administrators can assign support requests. The customer interface hides the assignment form.",
+      "root_cause": "TrainingPolicy.admin always permits the call. Presentation-layer role checks cannot protect a direct HTTP endpoint.",
+      "recommended_remediation": "The shared administrator dependency applies a server-side admin role check and records denials before any state change.",
+      "implemented_remediation": "The shared administrator dependency applies a server-side admin role check and records denials before any state change.",
+      "hardened_verification": true,
+      "residual_risk": "The training bypass affects ticket assignment only. Role mutation and audit export retain real admin checks as safety boundaries.",
+      "references": [
+        "https://top10.owasp.org/2025/",
+        "https://github.com/OWASP/ASVS/tree/v5.0.0",
+        "https://owasp.org/www-project-web-security-testing-guide/v42/"
+      ]
+    },
+    {
+      "finding_id": "AEGIS-04",
+      "lab_id": "lab04",
+      "name": "SQL Injection",
+      "cwe": "CWE-89",
+      "owasp_top10_2025": "A05:2025 \u2014 Injection",
+      "asvs_5_0_0": [
+        "v5.0.0-1.2.4"
+      ],
+      "wstg_4_2": "WSTG-v42-INPV-05",
+      "affected_component": "apps/vulnerable/policy.py: search; apps/core/security.py: search",
+      "preconditions": "Synthetic local account; isolated repository-created services only.",
+      "severity": "High",
+      "severity_rationale": "Qualitative fictional business impact; no CVSS score is claimed.",
+      "reproduction_steps": [
+        "Sign in as alice and search normally for Workspace.",
+        "GET /api/tickets with q set to ' OR 1=1 -- (URL encode the parameter).",
+        "Compare returned owner IDs in the two variants.",
+        "Use only this read-only boolean payload against synthetic fixtures."
+      ],
+      "expected_behavior": "Training returns Bob's ticket because input changes the WHERE clause. Hardened treats the whole payload as literal search text and returns no matching tickets.",
+      "observed_behavior": [
+        {
+          "lab_id": "lab04",
+          "variant": "vulnerable",
+          "observations": {
+            "control_evaluation": {
+              "variant": "vulnerable",
+              "passed": true,
+              "observation": {
+                "payload_status": 200,
+                "returned_ticket_ids": [
+                  1,
+                  2
+                ],
+                "legitimate_search_count": 1
+              }
+            },
+            "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+          },
+          "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab04]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab04",
+          "variant": "hardened",
+          "observations": {
+            "control_evaluation": {
+              "variant": "hardened",
+              "passed": true,
+              "observation": {
+                "payload_status": 200,
+                "returned_ticket_ids": [],
+                "legitimate_search_count": 1
+              }
+            },
+            "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+          },
+          "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab04]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab04",
+          "variant": "vulnerable",
+          "observations": {
+            "returned_ticket_ids": [
+              1,
+              2
+            ],
+            "database": "SQLite"
+          },
+          "test": "tests/training/test_labs.py::test_lab04_sql[vulnerable]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab04",
+          "variant": "hardened",
+          "observations": {
+            "returned_ticket_ids": [],
+            "database": "SQLite"
+          },
+          "test": "tests/training/test_labs.py::test_lab04_sql[hardened]",
+          "test_passed": true
+        }
+      ],
+      "evidence": {
+        "status": "passed",
+        "vulnerable_demonstrated": true,
+        "hardened_verified": true,
+        "checks": [
+          {
+            "lab_id": "lab04",
+            "variant": "vulnerable",
+            "observations": {
+              "control_evaluation": {
+                "variant": "vulnerable",
+                "passed": true,
+                "observation": {
+                  "payload_status": 200,
+                  "returned_ticket_ids": [
+                    1,
+                    2
+                  ],
+                  "legitimate_search_count": 1
+                }
+              },
+              "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+            },
+            "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab04]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab04",
+            "variant": "hardened",
+            "observations": {
+              "control_evaluation": {
+                "variant": "hardened",
+                "passed": true,
+                "observation": {
+                  "payload_status": 200,
+                  "returned_ticket_ids": [],
+                  "legitimate_search_count": 1
+                }
+              },
+              "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+            },
+            "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab04]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab04",
+            "variant": "vulnerable",
+            "observations": {
+              "returned_ticket_ids": [
+                1,
+                2
+              ],
+              "database": "SQLite"
+            },
+            "test": "tests/training/test_labs.py::test_lab04_sql[vulnerable]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab04",
+            "variant": "hardened",
+            "observations": {
+              "returned_ticket_ids": [],
+              "database": "SQLite"
+            },
+            "test": "tests/training/test_labs.py::test_lab04_sql[hardened]",
+            "test_passed": true
+          }
+        ],
+        "limitations": [
+          "Local test evidence; database/transport/browser details are recorded per observation. This does not establish Docker networking or ZAP outcomes."
+        ]
+      },
+      "business_impact": "The support queue searches ticket titles while limiting customer results to their own tickets.",
+      "root_cause": "TrainingPolicy.search interpolates the search term into SQL source. The injected OR predicate bypasses the ownership condition.",
+      "recommended_remediation": "SecurePolicy.search builds SQLAlchemy expressions and binds values. It also escapes LIKE wildcards so literal searches remain predictable.",
+      "implemented_remediation": "SecurePolicy.search builds SQLAlchemy expressions and binds values. It also escapes LIKE wildcards so literal searches remain predictable.",
+      "hardened_verification": true,
+      "residual_risk": "The demonstration runs in a separate read-only PostgreSQL transaction using a restricted runtime role. SQLite tests do not establish that PostgreSQL boundary.",
+      "references": [
+        "https://top10.owasp.org/2025/",
+        "https://github.com/OWASP/ASVS/tree/v5.0.0",
+        "https://owasp.org/www-project-web-security-testing-guide/v42/"
+      ]
+    },
+    {
+      "finding_id": "AEGIS-05",
+      "lab_id": "lab05",
+      "name": "Stored Cross-Site Scripting",
+      "cwe": "CWE-79",
+      "owasp_top10_2025": "A05:2025 \u2014 Injection",
+      "asvs_5_0_0": [
+        "v5.0.0-1.2.1",
+        "v5.0.0-3.4.3"
+      ],
+      "wstg_4_2": "WSTG-v42-INPV-02",
+      "affected_component": "apps/core/templates/ticket.html; apps/core/security.py: render",
+      "preconditions": "Synthetic local account; isolated repository-created services only.",
+      "severity": "High",
+      "severity_rationale": "Qualitative fictional business impact; no CVSS score is claimed.",
+      "reproduction_steps": [
+        "Sign in as alice and add the harmless comment <script>document.body.dataset.proof='stored'</script> to ticket 1.",
+        "Reload /tickets/1 in Chromium.",
+        "Inspect document.body.dataset.proof and the visible comment text.",
+        "Run the explicit browser suite for execution evidence."
+      ],
+      "expected_behavior": "Training sets the local DOM marker stored. Hardened displays the input as text, creates no script element from the comment, and never sets the marker.",
+      "observed_behavior": [
+        {
+          "lab_id": "lab05",
+          "variant": "vulnerable",
+          "observations": {
+            "raw_script_in_html": true,
+            "browser_execution_verified": false
+          },
+          "test": "tests/training/test_labs.py::test_lab05_stored_rendering[vulnerable]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab05",
+          "variant": "hardened",
+          "observations": {
+            "raw_script_in_html": false,
+            "browser_execution_verified": false
+          },
+          "test": "tests/training/test_labs.py::test_lab05_stored_rendering[hardened]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab05",
+          "variant": "vulnerable",
+          "observations": {
+            "browser": "Chromium",
+            "dom_marker": "stored",
+            "browser_execution_verified": true,
+            "screenshot": "artifacts/browser/lab05-vulnerable.png"
+          },
+          "test": "tests/browser/test_browser_labs.py::test_stored_xss[vulnerable]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab05",
+          "variant": "hardened",
+          "observations": {
+            "browser": "Chromium",
+            "dom_marker": null,
+            "browser_execution_verified": true,
+            "screenshot": "artifacts/browser/lab05-hardened.png"
+          },
+          "test": "tests/browser/test_browser_labs.py::test_stored_xss[hardened]",
+          "test_passed": true
+        }
+      ],
+      "evidence": {
+        "status": "passed",
+        "vulnerable_demonstrated": true,
+        "hardened_verified": true,
+        "checks": [
+          {
+            "lab_id": "lab05",
+            "variant": "vulnerable",
+            "observations": {
+              "raw_script_in_html": true,
+              "browser_execution_verified": false
+            },
+            "test": "tests/training/test_labs.py::test_lab05_stored_rendering[vulnerable]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab05",
+            "variant": "hardened",
+            "observations": {
+              "raw_script_in_html": false,
+              "browser_execution_verified": false
+            },
+            "test": "tests/training/test_labs.py::test_lab05_stored_rendering[hardened]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab05",
+            "variant": "vulnerable",
+            "observations": {
+              "browser": "Chromium",
+              "dom_marker": "stored",
+              "browser_execution_verified": true,
+              "screenshot": "artifacts/browser/lab05-vulnerable.png"
+            },
+            "test": "tests/browser/test_browser_labs.py::test_stored_xss[vulnerable]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab05",
+            "variant": "hardened",
+            "observations": {
+              "browser": "Chromium",
+              "dom_marker": null,
+              "browser_execution_verified": true,
+              "screenshot": "artifacts/browser/lab05-hardened.png"
+            },
+            "test": "tests/browser/test_browser_labs.py::test_stored_xss[hardened]",
+            "test_passed": true
+          }
+        ],
+        "limitations": [
+          "Local test evidence; database/transport/browser details are recorded per observation. This does not establish Docker networking or ZAP outcomes."
+        ]
+      },
+      "business_impact": "A support comment persists in the database and is later rendered in a conversation.",
+      "root_cause": "TrainingPolicy.render marks untrusted comments as trusted HTML, bypassing Jinja's escaping.",
+      "recommended_remediation": "Escape HTML at the final render boundary. Keep scripts in same-origin static files and apply a restrictive CSP as defense in depth.",
+      "implemented_remediation": "Escape HTML at the final render boundary. Keep scripts in same-origin static files and apply a restrictive CSP as defense in depth.",
+      "hardened_verification": true,
+      "residual_risk": "The proof changes only a browser-local DOM attribute. API text comparisons alone do not prove browser execution or prevention.",
+      "references": [
+        "https://top10.owasp.org/2025/",
+        "https://github.com/OWASP/ASVS/tree/v5.0.0",
+        "https://owasp.org/www-project-web-security-testing-guide/v42/"
+      ]
+    },
+    {
+      "finding_id": "AEGIS-06",
+      "lab_id": "lab06",
+      "name": "Reflected Cross-Site Scripting",
+      "cwe": "CWE-79",
+      "owasp_top10_2025": "A05:2025 \u2014 Injection",
+      "asvs_5_0_0": [
+        "v5.0.0-1.2.1",
+        "v5.0.0-1.1.2"
+      ],
+      "wstg_4_2": "WSTG-v42-INPV-01",
+      "affected_component": "apps/core/routes.py: search_page; apps/core/templates/search.html",
+      "preconditions": "Synthetic local account; isolated repository-created services only.",
+      "severity": "Medium",
+      "severity_rationale": "Qualitative fictional business impact; no CVSS score is claimed.",
+      "reproduction_steps": [
+        "Sign in and open /search with q set to <script>document.body.dataset.proof='reflected'</script>.",
+        "Inspect the browser-local DOM marker.",
+        "Verify the hardened response displays literal angle brackets without inserting an executable element."
+      ],
+      "expected_behavior": "The training page executes the harmless marker script. The hardened page renders it as text.",
+      "observed_behavior": [
+        {
+          "lab_id": "lab06",
+          "variant": "vulnerable",
+          "observations": {
+            "raw_script_in_html": true,
+            "browser_execution_verified": false
+          },
+          "test": "tests/training/test_labs.py::test_lab06_reflected_rendering[vulnerable]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab06",
+          "variant": "hardened",
+          "observations": {
+            "raw_script_in_html": false,
+            "browser_execution_verified": false
+          },
+          "test": "tests/training/test_labs.py::test_lab06_reflected_rendering[hardened]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab06",
+          "variant": "vulnerable",
+          "observations": {
+            "browser": "Chromium",
+            "dom_marker": "reflected",
+            "browser_execution_verified": true,
+            "screenshot": "artifacts/browser/lab06-vulnerable.png"
+          },
+          "test": "tests/browser/test_browser_labs.py::test_reflected_xss[vulnerable]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab06",
+          "variant": "hardened",
+          "observations": {
+            "browser": "Chromium",
+            "dom_marker": null,
+            "browser_execution_verified": true,
+            "screenshot": "artifacts/browser/lab06-hardened.png"
+          },
+          "test": "tests/browser/test_browser_labs.py::test_reflected_xss[hardened]",
+          "test_passed": true
+        }
+      ],
+      "evidence": {
+        "status": "passed",
+        "vulnerable_demonstrated": true,
+        "hardened_verified": true,
+        "checks": [
+          {
+            "lab_id": "lab06",
+            "variant": "vulnerable",
+            "observations": {
+              "raw_script_in_html": true,
+              "browser_execution_verified": false
+            },
+            "test": "tests/training/test_labs.py::test_lab06_reflected_rendering[vulnerable]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab06",
+            "variant": "hardened",
+            "observations": {
+              "raw_script_in_html": false,
+              "browser_execution_verified": false
+            },
+            "test": "tests/training/test_labs.py::test_lab06_reflected_rendering[hardened]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab06",
+            "variant": "vulnerable",
+            "observations": {
+              "browser": "Chromium",
+              "dom_marker": "reflected",
+              "browser_execution_verified": true,
+              "screenshot": "artifacts/browser/lab06-vulnerable.png"
+            },
+            "test": "tests/browser/test_browser_labs.py::test_reflected_xss[vulnerable]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab06",
+            "variant": "hardened",
+            "observations": {
+              "browser": "Chromium",
+              "dom_marker": null,
+              "browser_execution_verified": true,
+              "screenshot": "artifacts/browser/lab06-hardened.png"
+            },
+            "test": "tests/browser/test_browser_labs.py::test_reflected_xss[hardened]",
+            "test_passed": true
+          }
+        ],
+        "limitations": [
+          "Local test evidence; database/transport/browser details are recorded per observation. This does not establish Docker networking or ZAP outcomes."
+        ]
+      },
+      "business_impact": "A search feedback page echoes the supplied query into its HTML response.",
+      "root_cause": "The training policy returns Markup for the unescaped query, turning input data into document structure.",
+      "recommended_remediation": "Encode the query for an HTML text-node context at the final output step; avoid assigning untrusted values to innerHTML.",
+      "implemented_remediation": "Encode the query for an HTML text-node context at the final output step; avoid assigning untrusted values to innerHTML.",
+      "hardened_verification": true,
+      "residual_risk": "The supported echo context is an HTML text node. This lesson does not establish encoding correctness for every possible JavaScript or CSS sink.",
+      "references": [
+        "https://top10.owasp.org/2025/",
+        "https://github.com/OWASP/ASVS/tree/v5.0.0",
+        "https://owasp.org/www-project-web-security-testing-guide/v42/"
+      ]
+    },
+    {
+      "finding_id": "AEGIS-07",
+      "lab_id": "lab07",
+      "name": "Cross-Site Request Forgery",
+      "cwe": "CWE-352",
+      "owasp_top10_2025": "A01:2025 \u2014 Broken Access Control",
+      "asvs_5_0_0": [
+        "v5.0.0-3.5.1",
+        "v5.0.0-3.3.2"
+      ],
+      "wstg_4_2": "WSTG-v42-SESS-05",
+      "affected_component": "apps/core/dependencies.py: change; apps/core/security.py: csrf",
+      "preconditions": "Synthetic local account; isolated repository-created services only.",
+      "severity": "Medium",
+      "severity_rationale": "Qualitative fictional business impact; no CVSS score is claimed.",
+      "reproduction_steps": [
+        "Authenticate in each variant.",
+        "From a different loopback port, submit a form POST to /api/profile with display_name=Forged Local Name and no token.",
+        "Observe the response and profile state.",
+        "Repeat a legitimate update with the session's X-CSRF-Token header."
+      ],
+      "expected_behavior": "The training profile changes. Hardened returns 403 and retains its original display name; the valid token update succeeds.",
+      "observed_behavior": [
+        {
+          "lab_id": "lab07",
+          "variant": "vulnerable",
+          "observations": {
+            "control_evaluation": {
+              "variant": "vulnerable",
+              "passed": true,
+              "observation": {
+                "forged_status": 200,
+                "state_changed": true
+              }
+            },
+            "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+          },
+          "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab07]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab07",
+          "variant": "hardened",
+          "observations": {
+            "control_evaluation": {
+              "variant": "hardened",
+              "passed": true,
+              "observation": {
+                "forged_status": 403,
+                "state_changed": false
+              }
+            },
+            "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+          },
+          "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab07]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab07",
+          "variant": "vulnerable",
+          "observations": {
+            "forged_status": 200,
+            "observed_name": "Forged Local Name",
+            "browser_verified": false
+          },
+          "test": "tests/training/test_labs.py::test_lab07_csrf[vulnerable]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab07",
+          "variant": "hardened",
+          "observations": {
+            "forged_status": 403,
+            "observed_name": "Alice Morgan",
+            "browser_verified": false
+          },
+          "test": "tests/training/test_labs.py::test_lab07_csrf[hardened]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab07",
+          "variant": "vulnerable",
+          "observations": {
+            "browser": "Chromium",
+            "browser_verified": true,
+            "forged_status": 200,
+            "observed_name": "Forged Local Name"
+          },
+          "test": "tests/browser/test_browser_labs.py::test_cross_origin_form[vulnerable]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab07",
+          "variant": "hardened",
+          "observations": {
+            "browser": "Chromium",
+            "browser_verified": true,
+            "forged_status": 403,
+            "observed_name": "Alice Morgan"
+          },
+          "test": "tests/browser/test_browser_labs.py::test_cross_origin_form[hardened]",
+          "test_passed": true
+        }
+      ],
+      "evidence": {
+        "status": "passed",
+        "vulnerable_demonstrated": true,
+        "hardened_verified": true,
+        "checks": [
+          {
+            "lab_id": "lab07",
+            "variant": "vulnerable",
+            "observations": {
+              "control_evaluation": {
+                "variant": "vulnerable",
+                "passed": true,
+                "observation": {
+                  "forged_status": 200,
+                  "state_changed": true
+                }
+              },
+              "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+            },
+            "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab07]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab07",
+            "variant": "hardened",
+            "observations": {
+              "control_evaluation": {
+                "variant": "hardened",
+                "passed": true,
+                "observation": {
+                  "forged_status": 403,
+                  "state_changed": false
+                }
+              },
+              "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+            },
+            "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab07]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab07",
+            "variant": "vulnerable",
+            "observations": {
+              "forged_status": 200,
+              "observed_name": "Forged Local Name",
+              "browser_verified": false
+            },
+            "test": "tests/training/test_labs.py::test_lab07_csrf[vulnerable]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab07",
+            "variant": "hardened",
+            "observations": {
+              "forged_status": 403,
+              "observed_name": "Alice Morgan",
+              "browser_verified": false
+            },
+            "test": "tests/training/test_labs.py::test_lab07_csrf[hardened]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab07",
+            "variant": "vulnerable",
+            "observations": {
+              "browser": "Chromium",
+              "browser_verified": true,
+              "forged_status": 200,
+              "observed_name": "Forged Local Name"
+            },
+            "test": "tests/browser/test_browser_labs.py::test_cross_origin_form[vulnerable]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab07",
+            "variant": "hardened",
+            "observations": {
+              "browser": "Chromium",
+              "browser_verified": true,
+              "forged_status": 403,
+              "observed_name": "Alice Morgan"
+            },
+            "test": "tests/browser/test_browser_labs.py::test_cross_origin_form[hardened]",
+            "test_passed": true
+          }
+        ],
+        "limitations": [
+          "Local test evidence; database/transport/browser details are recorded per observation. This does not establish Docker networking or ZAP outcomes."
+        ]
+      },
+      "business_impact": "An authenticated customer updates a display name through a state-changing form request.",
+      "root_cause": "TrainingPolicy.csrf does nothing, allowing an ambient session cookie to authorize an unsolicited form.",
+      "recommended_remediation": "Validate a per-session synchronizer token using a constant-time comparison, validate Origin when supplied, and use HttpOnly SameSite=Lax cookies.",
+      "implemented_remediation": "Validate a per-session synchronizer token using a constant-time comparison, validate Origin when supplied, and use HttpOnly SameSite=Lax cookies.",
+      "hardened_verification": true,
+      "residual_risk": "Different loopback ports are cross-origin but same-site; this intentionally demonstrates why SameSite alone is insufficient. Local HTTP cookies lack Secure until TLS is configured.",
+      "references": [
+        "https://top10.owasp.org/2025/",
+        "https://github.com/OWASP/ASVS/tree/v5.0.0",
+        "https://owasp.org/www-project-web-security-testing-guide/v42/"
+      ]
+    },
+    {
+      "finding_id": "AEGIS-08",
+      "lab_id": "lab08",
+      "name": "Authentication Weaknesses",
+      "cwe": "CWE-307 / CWE-204",
+      "owasp_top10_2025": "A07:2025 \u2014 Authentication Failures",
+      "asvs_5_0_0": [
+        "v5.0.0-6.3.1",
+        "v5.0.0-6.3.8"
+      ],
+      "wstg_4_2": "WSTG-v42-IDNT-04 / WSTG-v42-ATHN-03",
+      "affected_component": "apps/core/routes.py: login; apps/core/security.py: rate_limit",
+      "preconditions": "Synthetic local account; isolated repository-created services only.",
+      "severity": "Medium",
+      "severity_rationale": "Qualitative fictional business impact; no CVSS score is claimed.",
+      "reproduction_steps": [
+        "POST a wrong password for alice and for nonexistent-user.",
+        "Compare status and response text.",
+        "Make at most six wrong attempts for one synthetic username.",
+        "Reset or wait 60 seconds, then verify a normal login."
+      ],
+      "expected_behavior": "Training distinguishes unknown user from wrong password and accepts all bounded attempts. Hardened returns identical 401 errors before its threshold, then 429.",
+      "observed_behavior": [
+        {
+          "lab_id": "lab08",
+          "variant": "vulnerable",
+          "observations": {
+            "control_evaluation": {
+              "variant": "vulnerable",
+              "passed": true,
+              "observation": {
+                "equal_errors": false,
+                "bounded_attempt_statuses": [
+                  401,
+                  401,
+                  401,
+                  401,
+                  401
+                ]
+              }
+            },
+            "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+          },
+          "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab08]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab08",
+          "variant": "hardened",
+          "observations": {
+            "control_evaluation": {
+              "variant": "hardened",
+              "passed": true,
+              "observation": {
+                "equal_errors": true,
+                "bounded_attempt_statuses": [
+                  401,
+                  401,
+                  401,
+                  401,
+                  429
+                ]
+              }
+            },
+            "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+          },
+          "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab08]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab08",
+          "variant": "vulnerable",
+          "observations": {
+            "identical_errors": false,
+            "bounded_statuses": [
+              401,
+              401,
+              401,
+              401,
+              401
+            ]
+          },
+          "test": "tests/training/test_labs.py::test_lab08_authentication[vulnerable]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab08",
+          "variant": "hardened",
+          "observations": {
+            "identical_errors": true,
+            "bounded_statuses": [
+              401,
+              401,
+              401,
+              401,
+              429
+            ]
+          },
+          "test": "tests/training/test_labs.py::test_lab08_authentication[hardened]",
+          "test_passed": true
+        }
+      ],
+      "evidence": {
+        "status": "passed",
+        "vulnerable_demonstrated": true,
+        "hardened_verified": true,
+        "checks": [
+          {
+            "lab_id": "lab08",
+            "variant": "vulnerable",
+            "observations": {
+              "control_evaluation": {
+                "variant": "vulnerable",
+                "passed": true,
+                "observation": {
+                  "equal_errors": false,
+                  "bounded_attempt_statuses": [
+                    401,
+                    401,
+                    401,
+                    401,
+                    401
+                  ]
+                }
+              },
+              "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+            },
+            "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab08]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab08",
+            "variant": "hardened",
+            "observations": {
+              "control_evaluation": {
+                "variant": "hardened",
+                "passed": true,
+                "observation": {
+                  "equal_errors": true,
+                  "bounded_attempt_statuses": [
+                    401,
+                    401,
+                    401,
+                    401,
+                    429
+                  ]
+                }
+              },
+              "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+            },
+            "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab08]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab08",
+            "variant": "vulnerable",
+            "observations": {
+              "identical_errors": false,
+              "bounded_statuses": [
+                401,
+                401,
+                401,
+                401,
+                401
+              ]
+            },
+            "test": "tests/training/test_labs.py::test_lab08_authentication[vulnerable]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab08",
+            "variant": "hardened",
+            "observations": {
+              "identical_errors": true,
+              "bounded_statuses": [
+                401,
+                401,
+                401,
+                401,
+                429
+              ]
+            },
+            "test": "tests/training/test_labs.py::test_lab08_authentication[hardened]",
+            "test_passed": true
+          }
+        ],
+        "limitations": [
+          "Local test evidence; database/transport/browser details are recorded per observation. This does not establish Docker networking or ZAP outcomes."
+        ]
+      },
+      "business_impact": "An attacker with no account compares failed login responses and repeats a small bounded fixture sequence.",
+      "root_cause": "TrainingPolicy.login_error reveals account existence and its rate_limit omits attempt accounting.",
+      "recommended_remediation": "Use an equal-format response and dummy Argon2 verification for unknown users, persist account/client attempt buckets, and issue fresh opaque server-side sessions.",
+      "implemented_remediation": "Use an equal-format response and dummy Argon2 verification for unknown users, persist account/client attempt buckets, and issue fresh opaque server-side sessions.",
+      "hardened_verification": true,
+      "residual_risk": "Single-process throttling is suitable for the one-worker lab, not a distributed rate limiter. Timing tests do not prove constant-time end-to-end behavior. Fixture credentials are intentionally public.",
+      "references": [
+        "https://top10.owasp.org/2025/",
+        "https://github.com/OWASP/ASVS/tree/v5.0.0",
+        "https://owasp.org/www-project-web-security-testing-guide/v42/"
+      ]
+    },
+    {
+      "finding_id": "AEGIS-09",
+      "lab_id": "lab09",
+      "name": "Insecure Session Management",
+      "cwe": "CWE-613",
+      "owasp_top10_2025": "A07:2025 \u2014 Authentication Failures",
+      "asvs_5_0_0": [
+        "v5.0.0-7.4.1",
+        "v5.0.0-8.3.2"
+      ],
+      "wstg_4_2": "WSTG-v42-SESS-06",
+      "affected_component": "apps/core/security.py: revoke/session_valid; apps/core/dependencies.py: principal",
+      "preconditions": "Synthetic local account; isolated repository-created services only.",
+      "severity": "High",
+      "severity_rationale": "Qualitative fictional business impact; no CVSS score is claimed.",
+      "reproduction_steps": [
+        "Sign in as sam and retain the synthetic session cookie in memory only.",
+        "POST /api/logout with the correct CSRF token.",
+        "Replay the old cookie to GET /api/session.",
+        "Check fresh login rotation, expiry, invalid cookies and role-change invalidation in regression tests."
+      ],
+      "expected_behavior": "Training accepts the logged-out cookie. Hardened returns 401 and also rejects expired or invalidated sessions.",
+      "observed_behavior": [
+        {
+          "lab_id": "lab09",
+          "variant": "vulnerable",
+          "observations": {
+            "control_evaluation": {
+              "variant": "vulnerable",
+              "passed": true,
+              "observation": {
+                "logout_status": 200,
+                "replay_status": 200
+              }
+            },
+            "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+          },
+          "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab09]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab09",
+          "variant": "hardened",
+          "observations": {
+            "control_evaluation": {
+              "variant": "hardened",
+              "passed": true,
+              "observation": {
+                "logout_status": 200,
+                "replay_status": 401
+              }
+            },
+            "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+          },
+          "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab09]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab09",
+          "variant": "vulnerable",
+          "observations": {
+            "stale_cookie_status": 200
+          },
+          "test": "tests/training/test_labs.py::test_lab09_sessions[vulnerable]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab09",
+          "variant": "hardened",
+          "observations": {
+            "stale_cookie_status": 401
+          },
+          "test": "tests/training/test_labs.py::test_lab09_sessions[hardened]",
+          "test_passed": true
+        }
+      ],
+      "evidence": {
+        "status": "passed",
+        "vulnerable_demonstrated": true,
+        "hardened_verified": true,
+        "checks": [
+          {
+            "lab_id": "lab09",
+            "variant": "vulnerable",
+            "observations": {
+              "control_evaluation": {
+                "variant": "vulnerable",
+                "passed": true,
+                "observation": {
+                  "logout_status": 200,
+                  "replay_status": 200
+                }
+              },
+              "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+            },
+            "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab09]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab09",
+            "variant": "hardened",
+            "observations": {
+              "control_evaluation": {
+                "variant": "hardened",
+                "passed": true,
+                "observation": {
+                  "logout_status": 200,
+                  "replay_status": 401
+                }
+              },
+              "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+            },
+            "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab09]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab09",
+            "variant": "vulnerable",
+            "observations": {
+              "stale_cookie_status": 200
+            },
+            "test": "tests/training/test_labs.py::test_lab09_sessions[vulnerable]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab09",
+            "variant": "hardened",
+            "observations": {
+              "stale_cookie_status": 401
+            },
+            "test": "tests/training/test_labs.py::test_lab09_sessions[hardened]",
+            "test_passed": true
+          }
+        ],
+        "limitations": [
+          "Local test evidence; database/transport/browser details are recorded per observation. This does not establish Docker networking or ZAP outcomes."
+        ]
+      },
+      "business_impact": "An employee signs out, but an earlier copy of their session cookie may still be replayed.",
+      "root_cause": "TrainingPolicy.revoke deletes no server record; the browser's cookie removal does not invalidate a stolen reference token.",
+      "recommended_remediation": "Store only token hashes, delete backend sessions on logout, rotate on login, expire sessions, and compare a user's current session version after privilege changes.",
+      "implemented_remediation": "Store only token hashes, delete backend sessions on logout, rotate on login, expire sessions, and compare a user's current session version after privilege changes.",
+      "hardened_verification": true,
+      "residual_risk": "Reference tokens remain bearer credentials until invalidated. Cookies for the two variants have distinct names because cookies do not isolate by port.",
+      "references": [
+        "https://top10.owasp.org/2025/",
+        "https://github.com/OWASP/ASVS/tree/v5.0.0",
+        "https://owasp.org/www-project-web-security-testing-guide/v42/"
+      ]
+    },
+    {
+      "finding_id": "AEGIS-10",
+      "lab_id": "lab10",
+      "name": "Unsafe File Upload Handling",
+      "cwe": "CWE-434 / CWE-22",
+      "owasp_top10_2025": "A02:2025 \u2014 Security Misconfiguration",
+      "asvs_5_0_0": [
+        "v5.0.0-5.2.1",
+        "v5.0.0-5.2.2",
+        "v5.0.0-5.3.2"
+      ],
+      "wstg_4_2": "WSTG-v42-BUSL-08 / WSTG-v42-BUSL-09",
+      "affected_component": "apps/core/security.py: upload; apps/core/routes.py: upload/download",
+      "preconditions": "Synthetic local account; isolated repository-created services only.",
+      "severity": "Medium",
+      "severity_rationale": "Qualitative fictional business impact; no CVSS score is claimed.",
+      "reproduction_steps": [
+        "Upload harmless text with filename ../notes.csv to ticket 1.",
+        "Try a 65537-byte text document and UTF-8-invalid bytes.",
+        "Upload a normal small notes.txt and download it.",
+        "Never upload executable code; all stored content remains inert database bytes."
+      ],
+      "expected_behavior": "Training accepts unsafe metadata and files above the hardened size limit up to its safety ceiling. Hardened rejects them and accepts valid small UTF-8 .txt documents with generated storage keys.",
+      "observed_behavior": [
+        {
+          "lab_id": "lab10",
+          "variant": "vulnerable",
+          "observations": {
+            "control_evaluation": {
+              "variant": "vulnerable",
+              "passed": true,
+              "observation": {
+                "unsafe_filename_status": 201,
+                "safe_upload_status": 201
+              }
+            },
+            "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+          },
+          "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab10]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab10",
+          "variant": "hardened",
+          "observations": {
+            "control_evaluation": {
+              "variant": "hardened",
+              "passed": true,
+              "observation": {
+                "unsafe_filename_status": 422,
+                "safe_upload_status": 201
+              }
+            },
+            "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+          },
+          "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab10]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab10",
+          "variant": "vulnerable",
+          "observations": {
+            "unsafe_filename_status": 201,
+            "valid_upload": 201
+          },
+          "test": "tests/training/test_labs.py::test_lab10_uploads[vulnerable]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab10",
+          "variant": "hardened",
+          "observations": {
+            "unsafe_filename_status": 422,
+            "valid_upload": 201
+          },
+          "test": "tests/training/test_labs.py::test_lab10_uploads[hardened]",
+          "test_passed": true
+        }
+      ],
+      "evidence": {
+        "status": "passed",
+        "vulnerable_demonstrated": true,
+        "hardened_verified": true,
+        "checks": [
+          {
+            "lab_id": "lab10",
+            "variant": "vulnerable",
+            "observations": {
+              "control_evaluation": {
+                "variant": "vulnerable",
+                "passed": true,
+                "observation": {
+                  "unsafe_filename_status": 201,
+                  "safe_upload_status": 201
+                }
+              },
+              "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+            },
+            "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab10]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab10",
+            "variant": "hardened",
+            "observations": {
+              "control_evaluation": {
+                "variant": "hardened",
+                "passed": true,
+                "observation": {
+                  "unsafe_filename_status": 422,
+                  "safe_upload_status": 201
+                }
+              },
+              "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+            },
+            "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab10]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab10",
+            "variant": "vulnerable",
+            "observations": {
+              "unsafe_filename_status": 201,
+              "valid_upload": 201
+            },
+            "test": "tests/training/test_labs.py::test_lab10_uploads[vulnerable]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab10",
+            "variant": "hardened",
+            "observations": {
+              "unsafe_filename_status": 422,
+              "valid_upload": 201
+            },
+            "test": "tests/training/test_labs.py::test_lab10_uploads[hardened]",
+            "test_passed": true
+          }
+        ],
+        "limitations": [
+          "Local test evidence; database/transport/browser details are recorded per observation. This does not establish Docker networking or ZAP outcomes."
+        ]
+      },
+      "business_impact": "A customer attaches a text document, supplying an unexpected extension, path-like filename, or excessive content.",
+      "root_cause": "TrainingPolicy.upload retains the raw filename and skips extension, content and strict size validation.",
+      "recommended_remediation": "Canonicalize and validate names, accept only bounded UTF-8 text, use random storage identifiers, and force text/plain attachment downloads.",
+      "implemented_remediation": "Canonicalize and validate names, accept only bounded UTF-8 text, use random storage identifiers, and force text/plain attachment downloads.",
+      "hardened_verification": true,
+      "residual_risk": "Files are database blobs, not filesystem writes. The exercise demonstrates unsafe acceptance and metadata retention, not actual host path traversal or program execution.",
+      "references": [
+        "https://top10.owasp.org/2025/",
+        "https://github.com/OWASP/ASVS/tree/v5.0.0",
+        "https://owasp.org/www-project-web-security-testing-guide/v42/"
+      ]
+    },
+    {
+      "finding_id": "AEGIS-11",
+      "lab_id": "lab11",
+      "name": "SSRF Simulation",
+      "cwe": "CWE-918",
+      "owasp_top10_2025": "A01:2025 \u2014 Broken Access Control",
+      "asvs_5_0_0": [
+        "v5.0.0-1.3.6",
+        "v5.0.0-8.3.3"
+      ],
+      "wstg_4_2": "WSTG-v42-INPV-19",
+      "affected_component": "apps/core/security.py: fetch_simulation; apps/simulator/main.py",
+      "preconditions": "Synthetic local account; isolated repository-created services only.",
+      "severity": "Medium",
+      "severity_rationale": "Qualitative fictional business impact; no CVSS score is claimed.",
+      "reproduction_steps": [
+        "Request GET /api/preview?source=handbook.",
+        "Change the selector to metadata.",
+        "Compare the synthetic internal classification returned by training with the hardened denial.",
+        "Confirm URL strings, IP addresses and unknown selectors are rejected without network requests."
+      ],
+      "expected_behavior": "Training reaches the private synthetic fixture. Hardened allows only handbook. No variant accepts an arbitrary host, scheme, port or URL.",
+      "observed_behavior": [
+        {
+          "lab_id": "lab11",
+          "variant": "vulnerable",
+          "observations": {
+            "control_evaluation": {
+              "variant": "vulnerable",
+              "passed": true,
+              "observation": {
+                "private_status": 200,
+                "public_status": 200
+              }
+            },
+            "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+          },
+          "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab11]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab11",
+          "variant": "hardened",
+          "observations": {
+            "control_evaluation": {
+              "variant": "hardened",
+              "passed": true,
+              "observation": {
+                "private_status": 403,
+                "public_status": 200
+              }
+            },
+            "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+          },
+          "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab11]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab11",
+          "variant": "vulnerable",
+          "observations": {
+            "private_status": 200,
+            "destinations": [
+              "http://simulator:8080/private/metadata",
+              "http://simulator:8080/public/handbook"
+            ],
+            "transport": "controlled fixture; not real Docker networking"
+          },
+          "test": "tests/training/test_labs.py::test_lab11_preview[vulnerable]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab11",
+          "variant": "hardened",
+          "observations": {
+            "private_status": 403,
+            "destinations": [
+              "http://simulator:8080/public/handbook"
+            ],
+            "transport": "controlled fixture; not real Docker networking"
+          },
+          "test": "tests/training/test_labs.py::test_lab11_preview[hardened]",
+          "test_passed": true
+        }
+      ],
+      "evidence": {
+        "status": "passed",
+        "vulnerable_demonstrated": true,
+        "hardened_verified": true,
+        "checks": [
+          {
+            "lab_id": "lab11",
+            "variant": "vulnerable",
+            "observations": {
+              "control_evaluation": {
+                "variant": "vulnerable",
+                "passed": true,
+                "observation": {
+                  "private_status": 200,
+                  "public_status": 200
+                }
+              },
+              "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+            },
+            "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab11]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab11",
+            "variant": "hardened",
+            "observations": {
+              "control_evaluation": {
+                "variant": "hardened",
+                "passed": true,
+                "observation": {
+                  "private_status": 403,
+                  "public_status": 200
+                }
+              },
+              "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+            },
+            "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab11]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab11",
+            "variant": "vulnerable",
+            "observations": {
+              "private_status": 200,
+              "destinations": [
+                "http://simulator:8080/private/metadata",
+                "http://simulator:8080/public/handbook"
+              ],
+              "transport": "controlled fixture; not real Docker networking"
+            },
+            "test": "tests/training/test_labs.py::test_lab11_preview[vulnerable]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab11",
+            "variant": "hardened",
+            "observations": {
+              "private_status": 403,
+              "destinations": [
+                "http://simulator:8080/public/handbook"
+              ],
+              "transport": "controlled fixture; not real Docker networking"
+            },
+            "test": "tests/training/test_labs.py::test_lab11_preview[hardened]",
+            "test_passed": true
+          }
+        ],
+        "limitations": [
+          "Local test evidence; database/transport/browser details are recorded per observation. This does not establish Docker networking or ZAP outcomes."
+        ]
+      },
+      "business_impact": "A support preview feature acts as a server-side intermediary to an internal synthetic document service.",
+      "root_cause": "The training policy lets a customer select a private internal fixture that the server can reach on their behalf.",
+      "recommended_remediation": "Map approved selectors to exact server-owned URLs, allow only the public document, disable redirects and environment proxies, bound response size and time, and block Internet egress with internal networks.",
+      "implemented_remediation": "Map approved selectors to exact server-owned URLs, allow only the public document, disable redirects and environment proxies, bound response size and time, and block Internet egress with internal networks.",
+      "hardened_verification": true,
+      "residual_risk": "Unit tests use a controlled transport fixture. Only Docker execution proves actual internal service reachability and network egress boundaries. This is a constrained simulation, not arbitrary URL fetching.",
+      "references": [
+        "https://top10.owasp.org/2025/",
+        "https://github.com/OWASP/ASVS/tree/v5.0.0",
+        "https://owasp.org/www-project-web-security-testing-guide/v42/"
+      ]
+    },
+    {
+      "finding_id": "AEGIS-12",
+      "lab_id": "lab12",
+      "name": "Security Misconfiguration and Errors",
+      "cwe": "CWE-209 / CWE-942",
+      "owasp_top10_2025": "A02:2025 \u2014 Security Misconfiguration; A10:2025 \u2014 Mishandling of Exceptional Conditions",
+      "asvs_5_0_0": [
+        "v5.0.0-16.5.1",
+        "v5.0.0-3.4.2",
+        "v5.0.0-3.4.3",
+        "v5.0.0-3.4.4"
+      ],
+      "wstg_4_2": "WSTG-v42-ERRH-02 / WSTG-v42-CONF-02",
+      "affected_component": "apps/core/application.py; apps/core/security.py: error/headers",
+      "preconditions": "Synthetic local account; isolated repository-created services only.",
+      "severity": "Medium",
+      "severity_rationale": "Qualitative fictional business impact; no CVSS score is claimed.",
+      "reproduction_steps": [
+        "Sign in and GET /api/diagnostics/error.",
+        "Inspect the body, CSP, nosniff and CORS headers.",
+        "Trigger malformed input and inspect safe validation responses.",
+        "Run the unexpected-exception test to check generic handling of actual failures."
+      ],
+      "expected_behavior": "Training reveals only fixed synthetic debug values and sets wildcard CORS. Hardened returns a generic 500, a request ID and restrictive security headers without wildcard CORS.",
+      "observed_behavior": [
+        {
+          "lab_id": "lab12",
+          "variant": "vulnerable",
+          "observations": {
+            "control_evaluation": {
+              "variant": "vulnerable",
+              "passed": true,
+              "observation": {
+                "error_status": 500,
+                "csp_present": false,
+                "generic_error": false
+              }
+            },
+            "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+          },
+          "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab12]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab12",
+          "variant": "hardened",
+          "observations": {
+            "control_evaluation": {
+              "variant": "hardened",
+              "passed": true,
+              "observation": {
+                "error_status": 500,
+                "csp_present": true,
+                "generic_error": true
+              }
+            },
+            "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+          },
+          "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab12]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab12",
+          "variant": "vulnerable",
+          "observations": {
+            "error_status": 500,
+            "csp_present": false,
+            "synthetic_debug_exposed": true
+          },
+          "test": "tests/training/test_labs.py::test_lab12_configuration[vulnerable]",
+          "test_passed": true
+        },
+        {
+          "lab_id": "lab12",
+          "variant": "hardened",
+          "observations": {
+            "error_status": 500,
+            "csp_present": true,
+            "synthetic_debug_exposed": false
+          },
+          "test": "tests/training/test_labs.py::test_lab12_configuration[hardened]",
+          "test_passed": true
+        }
+      ],
+      "evidence": {
+        "status": "passed",
+        "vulnerable_demonstrated": true,
+        "hardened_verified": true,
+        "checks": [
+          {
+            "lab_id": "lab12",
+            "variant": "vulnerable",
+            "observations": {
+              "control_evaluation": {
+                "variant": "vulnerable",
+                "passed": true,
+                "observation": {
+                  "error_status": 500,
+                  "csp_present": false,
+                  "generic_error": false
+                }
+              },
+              "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+            },
+            "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab12]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab12",
+            "variant": "hardened",
+            "observations": {
+              "control_evaluation": {
+                "variant": "hardened",
+                "passed": true,
+                "observation": {
+                  "error_status": 500,
+                  "csp_present": true,
+                  "generic_error": true
+                }
+              },
+              "transport": "in-process ASGI, including synthetic simulator; not Docker network evidence"
+            },
+            "test": "tests/training/test_control_evaluations.py::test_control_center_runs_real_paired_requests[lab12]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab12",
+            "variant": "vulnerable",
+            "observations": {
+              "error_status": 500,
+              "csp_present": false,
+              "synthetic_debug_exposed": true
+            },
+            "test": "tests/training/test_labs.py::test_lab12_configuration[vulnerable]",
+            "test_passed": true
+          },
+          {
+            "lab_id": "lab12",
+            "variant": "hardened",
+            "observations": {
+              "error_status": 500,
+              "csp_present": true,
+              "synthetic_debug_exposed": false
+            },
+            "test": "tests/training/test_labs.py::test_lab12_configuration[hardened]",
+            "test_passed": true
+          }
+        ],
+        "limitations": [
+          "Local test evidence; database/transport/browser details are recorded per observation. This does not establish Docker networking or ZAP outcomes."
+        ]
+      },
+      "business_impact": "A preview error exposes a synthetic source path and debug fixture, while permissive headers weaken the browser boundary.",
+      "root_cause": "TrainingPolicy.error deliberately exposes debugging details and omits the hardened header policy.",
+      "recommended_remediation": "Use a generic exception boundary, redact validation inputs, keep detailed event categories in structured logs, deny cross-origin sharing, and apply a consistent CSP and response header policy.",
+      "implemented_remediation": "Use a generic exception boundary, redact validation inputs, keep detailed event categories in structured logs, deny cross-origin sharing, and apply a consistent CSP and response header policy.",
+      "hardened_verification": true,
+      "residual_risk": "The exposed path and fixture key are fabricated training data, not an actual stack trace or secret. Local HTTP provides no HSTS or TLS guarantee.",
+      "references": [
+        "https://top10.owasp.org/2025/",
+        "https://github.com/OWASP/ASVS/tree/v5.0.0",
+        "https://owasp.org/www-project-web-security-testing-guide/v42/"
+      ]
+    }
+  ],
+  "provenance": [
+    {
+      "path": "artifacts/full/evidence.json",
+      "sha256": "7363f4073c0e64aedc6ac9851b3b6b7296a7935ce2756b242b6175120f514bff",
+      "generated_at": "2026-11-01T08:40:13.044504+00:00"
+    }
+  ]
+}
