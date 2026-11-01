@@ -1,6 +1,6 @@
 # Aegis — HarborDesk security assessment
 
-Generated: 2026-11-01T09:48:49.554446+00:00
+Generated: 2026-11-01T10:25:02.259104+00:00
 
 ## Executive summary
 

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-01T09:38:12.837353+00:00",
+  "generated_at": "2026-11-01T10:21:06.257505+00:00",
   "transport": "Actual local Docker Compose with independent PostgreSQL and internal simulator",
   "checks": [
     {

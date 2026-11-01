@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-01T09:36:01.600766+00:00",
+  "generated_at": "2026-11-01T10:18:46.774195+00:00",
   "exit_status": 0,
   "database": "SQLite unless an observation explicitly says PostgreSQL",
   "observations": [

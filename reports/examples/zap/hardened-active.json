@@ -1,8 +1,8 @@
 {
   "@programName": "ZAP",
   "@version": "2.17.0",
-  "@generated": "Sun, 1 Nov 2026 09:39:43",
-  "created": "2026-11-01T09:39:43.168737804Z",
+  "@generated": "Sun, 1 Nov 2026 10:22:48",
+  "created": "2026-11-01T10:22:48.973304892Z",
   "insights": [
     {
       "level": "Low",
@@ -107,6 +107,14 @@
       "key": "insight.endpoint.total",
       "description": "Count of total endpoints",
       "statistic": "31"
+    },
+    {
+      "level": "Info",
+      "reason": "Informational",
+      "site": "http://hardened:8080",
+      "key": "insight.response.slow",
+      "description": "Percentage of slow responses",
+      "statistic": "3"
     }
   ],
   "site": [
@@ -224,7 +232,7 @@
           "reference": "<p>https://www.zaproxy.org/docs/desktop/addons/authentication-helper/session-mgmt-id/</p>",
           "cweid": "-1",
           "wascid": "-1",
-          "sourceid": "92"
+          "sourceid": "89"
         },
         {
           "pluginid": "10031",
@@ -284,7 +292,7 @@
           "reference": "<p>https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html</p>",
           "cweid": "20",
           "wascid": "20",
-          "sourceid": "83"
+          "sourceid": "84"
         }
       ]
     }

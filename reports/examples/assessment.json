@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-01T09:48:49.554446+00:00",
+  "generated_at": "2026-11-01T10:25:02.259104+00:00",
   "scope": "Aegis local isolated HarborDesk only",
   "findings": [
     {
@@ -2240,14 +2240,14 @@
   ],
   "provenance": [
     {
-      "path": "artifacts/accepted-final/tests/evidence.json",
-      "sha256": "3a19ffab0fc4e614eb125ab8384deac57cd5f8ee22b84c3e91db2eecdb617900",
-      "generated_at": "2026-11-01T09:36:01.600766+00:00"
+      "path": "artifacts/release-accepted/tests/evidence.json",
+      "sha256": "63045eaeb60032b7a56e16eccd8d30e94401a49439ba28e83a20c6de63714451",
+      "generated_at": "2026-11-01T10:18:46.774195+00:00"
     },
     {
-      "path": "artifacts/accepted-final/compose/browser-evidence.json",
-      "sha256": "012cd557fe1b7655cebf7ebf076b0b2d7c2e129fe428836c7ad4133c8063bf39",
-      "generated_at": "2026-11-01T09:38:23.503546+00:00"
+      "path": "artifacts/release-accepted/compose/browser-evidence.json",
+      "sha256": "0a0ee182bf5dcd593a0d75941982c24585754fe4405f2bf769cf1001654da87a",
+      "generated_at": "2026-11-01T10:21:21.153156+00:00"
     }
   ]
 }

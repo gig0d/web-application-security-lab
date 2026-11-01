@@ -3,13 +3,13 @@
   "files": [
     {
       "file": "hardened-passive.json",
-      "original_sha256": "82f01a47443c26b13bf9acbad5f33ac0b385e098f88342d0c4d5b952d592ef4b",
-      "redacted_sha256": "99c261b168cc7d2242f6a52a05f4cf9011c2a649b028473f842f5d47c12c77c4"
+      "original_sha256": "ec9b82508aa1ab5c97a5acda70e1168c4852747bcb1bc6ae3910d697026cf612",
+      "redacted_sha256": "198f61cffbd69e027a3dddd02a30a6476952d2b02624cd8b554f20ed91da0ed3"
     },
     {
       "file": "hardened-passive.html",
-      "original_sha256": "e796ab8bd44963afefaa2fb8f7eac4ca990cdb55e72cfba75b66bf54e6e70868",
-      "redacted_sha256": "e796ab8bd44963afefaa2fb8f7eac4ca990cdb55e72cfba75b66bf54e6e70868"
+      "original_sha256": "c8bad8e1a72b63210bf657d2015e686b5abbc112ba566a69a452a493ac80f079",
+      "redacted_sha256": "c8bad8e1a72b63210bf657d2015e686b5abbc112ba566a69a452a493ac80f079"
     }
   ]
 }

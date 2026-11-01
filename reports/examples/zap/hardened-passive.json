@@ -1,8 +1,8 @@
 {
   "@programName": "ZAP",
   "@version": "2.17.0",
-  "@generated": "Sun, 1 Nov 2026 09:36:45",
-  "created": "2026-11-01T09:36:45.392844090Z",
+  "@generated": "Sun, 1 Nov 2026 10:20:04",
+  "created": "2026-11-01T10:20:04.822474290Z",
   "insights": [
     {
       "level": "Low",
@@ -18,7 +18,7 @@
       "site": "",
       "key": "insight.network.failure",
       "description": "Percentage of network failures",
-      "statistic": "48"
+      "statistic": "47"
     },
     {
       "level": "Info",
@@ -26,7 +26,7 @@
       "site": "http://hardened:8080",
       "key": "insight.code.2xx",
       "description": "Percentage of responses with status code 2xx",
-      "statistic": "89"
+      "statistic": "90"
     },
     {
       "level": "Info",
@@ -154,7 +154,7 @@
           "reference": "<p>https://www.zaproxy.org/docs/desktop/addons/authentication-helper/auth-req-id/</p>",
           "cweid": "-1",
           "wascid": "-1",
-          "sourceid": "60"
+          "sourceid": "58"
         },
         {
           "pluginid": "10024",
@@ -194,7 +194,7 @@
           "reference": "",
           "cweid": "598",
           "wascid": "13",
-          "sourceid": "60"
+          "sourceid": "58"
         },
         {
           "pluginid": "10112",
@@ -224,7 +224,7 @@
           "reference": "<p>https://www.zaproxy.org/docs/desktop/addons/authentication-helper/session-mgmt-id/</p>",
           "cweid": "-1",
           "wascid": "-1",
-          "sourceid": "85"
+          "sourceid": "87"
         },
         {
           "pluginid": "10031",
@@ -284,7 +284,7 @@
           "reference": "<p>https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html</p>",
           "cweid": "20",
           "wascid": "20",
-          "sourceid": "83"
+          "sourceid": "85"
         }
       ]
     }
